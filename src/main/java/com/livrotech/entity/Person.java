@@ -16,7 +16,7 @@ public class Person {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	protected Long id;
 
 	@Column(nullable = false)
 	protected String nome;
@@ -46,6 +46,10 @@ public class Person {
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	@Override

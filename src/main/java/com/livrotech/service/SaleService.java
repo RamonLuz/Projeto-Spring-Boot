@@ -23,7 +23,8 @@ public class SaleService {
 	private final BookRepository livroRepository;
 	private final SaleRepository vendaRepository;
 
-	public SaleService(SaleRepository vendaRepository, CustomerRepository customeRepository, BookRepository livroRepository, EmployeeRepository funcionarioRepository) {
+	public SaleService(SaleRepository vendaRepository, CustomerRepository customeRepository,
+			BookRepository livroRepository, EmployeeRepository funcionarioRepository) {
 		this.funcionarioRepository = funcionarioRepository;
 		this.livroRepository = livroRepository;
 		this.vendaRepository = vendaRepository;
@@ -39,37 +40,40 @@ public class SaleService {
 	}
 
 	public Sale salvar(Sale venda) {
-		
-		List<Book> existeLivro = livroRepository.findAll();
-		List<Customer> existeCliente = clienteRepository.findAll();
-		List<Employee> existeFuncionario = funcionarioRepository.findAll();
-		
-		if(!existeLivro.contains(venda.getLivro())) {
-			throw new ApiException(400, "Livro não existe", "Body");
-		}
-		if(!existeCliente.contains(venda.getCliente())) {
-			throw new ApiException(400, "Cliente não existe", "Body");
-		}
-		if(!existeFuncionario.contains(venda.getFuncionario())) {
-			throw new ApiException(400, "Funcionario não existe", "Body");
-		}
-		
-		sincronizarCliente(venda);
-		Sale vendaSalva = vendaRepository.save(venda);
 
-		return vendaSalva;
+		Customer cliente = clienteRepository.findByCpf(venda.getCliente().getCpf())
+				.orElseThrow(() -> new ApiException(400, "Cliente não existe", "Body"));
+
+		Book livro = livroRepository.findAll().stream().filter(l -> l.equals(venda.getLivro())).findFirst()
+				.orElseThrow(() -> new ApiException(400, "Livro não existe", "Body"));
+
+		Employee funcionario = funcionarioRepository.findAll().stream().filter(f -> f.equals(venda.getFuncionario()))
+				.findFirst().orElseThrow(() -> new ApiException(400, "Funcionario não existe", "Body"));
+
+		venda.setCliente(cliente);
+		venda.setLivro(livro);
+		venda.setFuncionario(funcionario);
+
+		sincronizarCliente(venda);
+
+		return vendaRepository.save(venda);
 	}
-	
+
 	private void sincronizarCliente(Sale venda) {
 		Optional<Customer> clienteExiste = clienteRepository.findByCpf(venda.getCliente().getCpf());
+
+		List<Book> livros = livroRepository.findByTitulo(venda.getLivro().getTitulo());
+
+		Book livro = livros.get(0);
 
 		if (clienteExiste.isPresent()) {
 
 			Customer cliente = clienteExiste.get();
-			cliente.getCompras().add(venda.getLivro());
+
+			cliente.getCompras().add(livro);
 
 		}
-		
+
 	}
 
 }

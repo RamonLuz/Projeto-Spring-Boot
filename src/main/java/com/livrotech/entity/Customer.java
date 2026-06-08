@@ -21,6 +21,7 @@ public class Customer extends Person {
 	private List<Book> compras;
 
 	public Customer(String nome, String cpf, String status, List<Book> compras) {
+		
 		super(nome, cpf);
 		this.status = status;
 		this.compras = compras;
