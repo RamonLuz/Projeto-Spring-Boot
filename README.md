@@ -1,108 +1,255 @@
-# 📚 LivroTech
+# 📚 Livrotech API
 
-Projeto desenvolvido com **Java + Spring Boot** com foco em aprendizado, prática de arquitetura backend e evolução profissional.
+API REST desenvolvida em **Java + Spring Boot** para gerenciamento de livros, clientes, funcionários e vendas.
 
-O objetivo deste projeto é estudar:
-
-- Java
-- Spring Boot
-- APIs REST
-- Arquitetura limpa (Clean Architecture)
-- Boas práticas de desenvolvimento
-- Git e GitHub
-- Testes automatizados
-- Integração contínua (CI/CD)
+O projeto foi criado com o objetivo de praticar conceitos de desenvolvimento backend utilizando Spring Boot, arquitetura em camadas e persistência de dados com JPA.
 
 ---
 
-# 🚀 Tecnologias Utilizadas
+## 🚀 Tecnologias utilizadas
 
-- Java 17+
-- Spring Boot
-- Maven
-- Spring Web
-- Spring Data JPA
-- PostgreSQL / H2
-- JUnit
-- GitHub Actions
-
----
-
-# 📂 Estrutura do Projeto
-
-```bash
-src/main/java/com/livrotech
-│
-├── domain/            # Regras de negócio
-├── application/       # Casos de uso
-├── infrastructure/    # Banco, configs e integrações
-├── presentation/      # Controllers e APIs REST
-└── config/            # Configurações gerais
-````
+* Java 21
+* Spring Boot
+* Spring Web
+* Spring Data JPA
+* Bean Validation
+* H2 Database
+* Maven
 
 ---
 
-# ⚙️ Como Executar o Projeto
+## 📂 Estrutura do Projeto
 
-## 1. Clonar o repositório
-
-```bash
-git clone https://github.com/SEU-USUARIO/livrotech.git
+```
+src
+└── main
+    ├── java
+    │   └── com.livrotech
+    │       ├── controller
+    │       ├── dto
+    │       ├── entity
+    │       ├── exception
+    │       ├── repository
+    │       ├── service
+    │       └── LivrotechApplication
+    └── resources
+        └── application.yml
 ```
 
 ---
 
-## 2. Entrar na pasta do projeto
+## 📖 Funcionalidades
+
+### Livros
+
+* Cadastrar livro
+* Listar livros
+* Buscar livro por ID
+* Atualizar livro
+* Remover livro
+
+### Clientes
+
+* Cadastrar cliente
+* Listar clientes
+* Buscar cliente por ID
+* Atualizar status do cliente
+* Remover cliente
+
+### Funcionários
+
+* Cadastrar funcionário
+* Listar funcionários
+* Buscar funcionário por ID
+
+### Vendas
+
+* Registrar venda
+* Listar vendas
+* Buscar venda por ID
+* Associar livros comprados ao cliente
+
+---
+
+## 🏛️ Arquitetura
+
+O projeto segue uma arquitetura em camadas:
+
+```
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Banco de Dados
+```
+
+---
+
+## 🔗 Relacionamentos
+
+* Um cliente pode possuir vários livros comprados.
+* Uma venda possui:
+
+  * Cliente
+  * Funcionário
+  * Livro
+  * Data da venda
+
+---
+
+## ⚠️ Tratamento de exceções
+
+A aplicação utiliza um tratamento global de exceções através do:
+
+```java
+@ControllerAdvice
+```
+
+Fornecendo respostas padronizadas para:
+
+* Campos obrigatórios não preenchidos;
+* Body da requisição ausente;
+* Tipos inválidos;
+* Regras de negócio da aplicação.
+
+Exemplo:
+
+```json
+{
+  "status": 400,
+  "message": "Cpf deve ter 11 digitos",
+  "field": "CPF"
+}
+```
+
+---
+
+## 🗄️ Banco de dados
+
+O projeto utiliza banco de dados em memória H2.
+
+### Configuração
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:livrotech
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+```
+
+### Console H2
+
+```
+http://localhost:8080/h2-console
+```
+
+---
+
+## 📌 Endpoints
+
+### Livros
+
+| Método | Endpoint    |
+| ------ | ----------- |
+| GET    | /Books      |
+| GET    | /Books/{id} |
+| POST   | /Books      |
+| PUT    | /Books/{id} |
+| DELETE | /Books/{id} |
+
+---
+
+### Clientes
+
+| Método | Endpoint       |
+| ------ | -------------- |
+| GET    | /Customer      |
+| GET    | /Customer/{id} |
+| POST   | /Customer      |
+| PUT    | /Customer/{id} |
+| DELETE | /Customer/{id} |
+
+---
+
+### Funcionários
+
+| Método | Endpoint       |
+| ------ | -------------- |
+| GET    | /Employee      |
+| GET    | /Employee/{id} |
+| POST   | /Employee      |
+
+---
+
+### Vendas
+
+| Método | Endpoint    |
+| ------ | ----------- |
+| GET    | /Sales      |
+| GET    | /Sales/{id} |
+| POST   | /Sales      |
+
+---
+
+## ▶️ Executando o projeto
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/RamonLuz/Projeto-Spring-Boot.git
+```
+
+Entre na pasta:
 
 ```bash
 cd livrotech
 ```
 
----
-
-## 3. Executar a aplicação
-
-### Linux/Mac
+Execute:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### Windows
+A aplicação será iniciada em:
 
-```bash
-mvnw.cmd spring-boot:run
+```
+http://localhost:8080
 ```
 
 ---
 
-# 🧪 Executar Testes
+## 🎯 Objetivo
 
-```bash
-mvn test
-```
+Projeto desenvolvido para estudos de Java e Spring Boot, com foco em:
 
----
-
-# 🔥 Objetivos do Projeto
-
-Este projeto está sendo utilizado para:
-
-* Evoluir no ecossistema Java
-* Aprender Spring Boot na prática
-* Aplicar arquitetura utilizada em empresas
-* Melhorar conhecimentos em backend
-* Construir portfólio profissional
+* APIs REST;
+* Spring Data JPA;
+* Relacionamentos entre entidades;
+* DTOs;
+* Validações;
+* Tratamento de exceções;
+* Organização em camadas;
+* Boas práticas de desenvolvimento backend.
 
 ---
 
-# 👨‍💻 Autor
+## 👨‍💻 Autor
 
-Desenvolvido por Ramon Luz
+**Ramon Luz**
 
-Estudando Java e Spring Boot para evolução profissional na área de desenvolvimento backend e automação de testes.
+QA Engineer | Software Quality Analyst
 
----
-
-```
-```
+* Java
+* Spring Boot
+* Selenium
+* Playwright
+* Cypress
+* Rest Assured
+* Python
+* SQL
+* CI/CD
