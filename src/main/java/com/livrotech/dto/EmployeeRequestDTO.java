@@ -6,39 +6,38 @@ import jakarta.validation.constraints.NotBlank;
 
 public class EmployeeRequestDTO extends Person {
 
-	private int matricula;
-	
-	@NotBlank(message = "Cargo é obrigatório")
-	private String cargo;
-	
-	@NotBlank(message = "Status é obrigatório")
-	private String status;
+    private int registrationNumber;
 
-	public EmployeeRequestDTO() {
-	}
+    @NotBlank(message = "Position is required")
+    private String position;
 
-	public int getMatricula() {
-		return matricula;
-	}
+    @NotBlank(message = "Status is required")
+    private String status;
 
-	public void setMatricula(int matricula) {
-		this.matricula = matricula;
-	}
+    public EmployeeRequestDTO() {
+    }
 
-	public String getCargo() {
-		return cargo;
-	}
+    public int getRegistrationNumber() {
+        return registrationNumber;
+    }
 
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
-	}
+    public void setRegistrationNumber(int registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getPosition() {
+        return position;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

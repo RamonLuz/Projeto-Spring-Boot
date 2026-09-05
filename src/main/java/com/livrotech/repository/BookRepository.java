@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.livrotech.entity.Book;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-	
-	List<Book> findByTitulo(String titulo);
 
-	List<Book> findByAutor(String autor);
+    List<Book> findByTitle(String title);
+
+    List<Book> findByAuthor(String author);
 }

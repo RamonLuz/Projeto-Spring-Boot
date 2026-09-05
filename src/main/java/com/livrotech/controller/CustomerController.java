@@ -21,80 +21,70 @@ import com.livrotech.service.CustomerService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/Customer")
+@RequestMapping("/customers")
 public class CustomerController {
 
-	private final CustomerService clienteService;
+    private final CustomerService customerService;
 
-	public CustomerController(CustomerService clienteService) {
-		this.clienteService = clienteService;
-	}
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
-	@GetMapping
-	public ResponseEntity<List<Customer>> listar() {
-		List<Customer> cliente = clienteService.listar();
-		
-		if(cliente.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(cliente);
-	}
+    @GetMapping
+    public ResponseEntity<List<Customer>> getAll() {
+        List<Customer> customers = customerService.listAll();
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Customer> buscarPorId(@PathVariable Long id) {
+        if (customers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-		Optional<Customer> cliente = clienteService.buscarPorId(id);
+        return ResponseEntity.ok(customers);
+    }
 
-		if (cliente.isPresent()) {
-			return ResponseEntity.ok(cliente.get());
-		}
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getById(@PathVariable Long id) {
+        Optional<Customer> customer = customerService.findById(id);
 
-		return ResponseEntity.notFound().build();
-	}
+        if (customer.isPresent()) {
+            return ResponseEntity.ok(customer.get());
+        }
 
-	@PostMapping
-	public ResponseEntity<Customer> salvar(@Valid @RequestBody CustomerRequestDTO dto) {
+        return ResponseEntity.notFound().build();
+    }
 
-		Customer cliente = new Customer();
+    @PostMapping
+    public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequestDTO dto) {
+        Customer customer = new Customer();
+        customer.setName(dto.getName());
+        customer.setCpf(dto.getCpf());
+        customer.setStatus(dto.getStatus());
 
-		cliente.setNome(dto.getNome());
-	    cliente.setCpf(dto.getCpf());
-		cliente.setStatus(dto.getStatus());
+        Customer savedCustomer = customerService.save(customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+    }
 
-		Customer clienteSalvo = clienteService.salvar(cliente);
+    @PutMapping("/{id}")
+    public ResponseEntity<Customer> update(@PathVariable Long id, @Valid @RequestBody CustomerRequestDTO dto) {
+        Customer customer = new Customer();
+        customer.setStatus(dto.getStatus());
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
-	}
-	
-	 @PutMapping("/{id}")
-	    public ResponseEntity<Customer> atualizar(
-	            @PathVariable Long id,
-	            @Valid @RequestBody CustomerRequestDTO dto) {
+        Optional<Customer> updatedCustomer = customerService.update(id, customer);
 
-	        Customer cliente = new Customer();
+        if (updatedCustomer.isPresent()) {
+            return ResponseEntity.ok(updatedCustomer.get());
+        }
 
-	        cliente.setStatus(dto.getStatus());
+        return ResponseEntity.notFound().build();
+    }
 
-	        Optional<Customer> clienteAtualizado = clienteService.atualizar(id, cliente);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        boolean removed = customerService.delete(id);
 
-	        if (clienteAtualizado.isPresent()) {
-	            return ResponseEntity.ok(clienteAtualizado.get());
-	        }
+        if (removed) {
+            return ResponseEntity.noContent().build();
+        }
 
-	        return ResponseEntity.notFound().build();
-	    }
-	    
-	    @DeleteMapping("/{id}")
-	    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-
-	        boolean removido = clienteService.deletar(id);
-
-	        if (removido) {
-	            return ResponseEntity.noContent().build();
-	        }
-
-	        return ResponseEntity.notFound().build();
-	    }
-
+        return ResponseEntity.notFound().build();
+    }
 }

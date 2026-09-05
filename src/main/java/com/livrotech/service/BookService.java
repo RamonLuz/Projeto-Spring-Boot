@@ -12,65 +12,60 @@ import com.livrotech.repository.BookRepository;
 @Service
 public class BookService {
 
-	private final BookRepository livroRepository;
+    private final BookRepository bookRepository;
 
-	public BookService(BookRepository livroRepository) {
-		this.livroRepository = livroRepository;
-	}
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
-	public List<Book> listar() {
-		return livroRepository.findAll();
-	}
+    public List<Book> listAll() {
+        return bookRepository.findAll();
+    }
 
-	public Book salvar(Book livro) {
+    public Book save(Book book) {
+        List<Book> books = bookRepository.findAll();
 
-		List<Book> listaDeLivros = livroRepository.findAll();
+        if (book == null) {
+            throw new ApiException(400, "Book is invalid", "Body");
+        }
 
-		if (listaDeLivros.contains(livro)) {
-			throw new ApiException(400, "Ja exixte o livro com esse autor", "Body");
-		}
+        if (books.contains(book)) {
+            throw new ApiException(400, "Book already exists for this author and title", "Body");
+        }
 
-		if (livro == null) {
-			throw new ApiException(400, "Livro invalido", "Body");
-		}
-		if (livro.getPreco() == null || livro.getPreco() <= 0) {
-			throw new ApiException(400, "Preço invalido", "Body");
-		}
+        if (book.getPrice() == null || book.getPrice() <= 0) {
+            throw new ApiException(400, "Price is invalid", "Body");
+        }
 
-		return livroRepository.save(livro);
-	}
+        return bookRepository.save(book);
+    }
 
-	public Optional<Book> buscarPorId(Long id) {
-		return livroRepository.findById(id);
-	}
+    public Optional<Book> findById(Long id) {
+        return bookRepository.findById(id);
+    }
 
-	public Optional<Book> atualizar(Long id, Book livroAtualizado) {
+    public Optional<Book> update(Long id, Book updatedBook) {
+        Optional<Book> existingBook = bookRepository.findById(id);
 
-		Optional<Book> livroExistente = livroRepository.findById(id);
+        if (existingBook.isPresent()) {
+            Book book = existingBook.get();
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthor(updatedBook.getAuthor());
+            book.setPrice(updatedBook.getPrice());
 
-		if (livroExistente.isPresent()) {
+            bookRepository.save(book);
+            return Optional.of(book);
+        }
 
-			Book livro = livroExistente.get();
+        return Optional.empty();
+    }
 
-			livro.setTitulo(livroAtualizado.getTitulo());
-			livro.setAutor(livroAtualizado.getAutor());
-			livro.setPreco(livroAtualizado.getPreco());
+    public boolean delete(Long id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+            return true;
+        }
 
-			livroRepository.save(livro);
-
-			return Optional.of(livro);
-		}
-
-		return Optional.empty();
-	}
-
-	public boolean deletar(Long id) {
-
-		if (livroRepository.existsById(id)) {
-			livroRepository.deleteById(id);
-			return true;
-		}
-
-		return false;
-	}
+        return false;
+    }
 }

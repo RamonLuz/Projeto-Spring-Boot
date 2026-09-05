@@ -18,30 +18,26 @@ import com.livrotech.repository.BookRepository;
 class BookServiceTest {
 
     @Mock
-    private BookRepository livroRepository;
+    private BookRepository bookRepository;
 
     @InjectMocks
-    private BookService livroService;
+    private BookService bookService;
 
     @Test
-    void deveListarLivros() {
-
-        // Arrange
-        Book livro = new Book(
+    void shouldListBooks() {
+        Book book = new Book(
                 1L,
                 "Clean Code",
                 "Robert Martin",
                 100.0
         );
 
-        when(livroRepository.findAll())
-                .thenReturn(List.of(livro));
+        when(bookRepository.findAll())
+                .thenReturn(List.of(book));
 
-        // Act
-        List<Book> resultado = livroService.listar();
+        List<Book> result = bookService.listAll();
 
-        // Assert
-        assertEquals(1, resultado.size());
-        assertEquals("Clean Code", resultado.get(0).getTitulo());
+        assertEquals(1, result.size());
+        assertEquals("Clean Code", result.get(0).getTitle());
     }
 }

@@ -1,5 +1,8 @@
 package com.livrotech.entity;
 
+import lombok.Getter;
+
+@Getter
 public class ApiException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
@@ -11,13 +14,5 @@ public class ApiException extends RuntimeException {
         this.status = status;
         this.field = field;
     }
-
-	public int getStatus() {
-		return status;
-	}
-
-	public String getField() {
-		return field;
-	}
 
 }

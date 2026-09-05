@@ -6,39 +6,40 @@ import jakarta.validation.constraints.Positive;
 
 public class BookRequestDTO {
 
-    @NotBlank(message = "Título é obrigatório")
-    private String titulo;
+    @NotBlank(message = "Title is required")
+    private String title;
 
-    @NotBlank(message = "Autor é obrigatório")
-    private String autor;
+    @NotBlank(message = "Author is required")
+    private String author;
 
-    @Positive(message = "Preço deve ser maior que zero")
-    @NotNull(message = "Preço obrigatório")
-    private Double preco;
+    @Positive(message = "Price must be greater than zero")
+    @NotNull(message = "Price is required")
+    private Double price;
 
-    public BookRequestDTO() {}
-
-    public String getTitulo() {
-        return titulo;
+    public BookRequestDTO() {
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public String getTitle() {
+        return title;
     }
 
-    public String getAutor() {
-        return autor;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public String getAuthor() {
+        return author;
     }
 
-    public Double getPreco() {
-        return preco;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public void setPreco(Double preco) {
-        this.preco = preco;
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

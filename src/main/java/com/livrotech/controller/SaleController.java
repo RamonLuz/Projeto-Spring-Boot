@@ -18,38 +18,34 @@ import com.livrotech.service.SaleService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/Sales")
+@RequestMapping("/sales")
 public class SaleController {
 
-	private final SaleService vendaService;
+    private final SaleService saleService;
 
-	public SaleController(SaleService vendaService) {
-		this.vendaService = vendaService;
-	}
-	
-	@GetMapping
-	public ResponseEntity<List<Sale>> listar() {
-		List<Sale> venda = vendaService.listar();
-		return ResponseEntity.ok(venda);
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<Sale> buscarPorId(@PathVariable Long id) {
+    public SaleController(SaleService saleService) {
+        this.saleService = saleService;
+    }
 
-		Optional<Sale> venda = vendaService.buscarPorId(id);
+    @GetMapping
+    public ResponseEntity<List<Sale>> getAll() {
+        return ResponseEntity.ok(saleService.listAll());
+    }
 
-		if (venda.isPresent()) {
-			return ResponseEntity.ok(venda.get());
-		}
+    @GetMapping("/{id}")
+    public ResponseEntity<Sale> getById(@PathVariable Long id) {
+        Optional<Sale> sale = saleService.findById(id);
 
-		return ResponseEntity.notFound().build();
-	}
-	
-	@PostMapping
-	public ResponseEntity<Sale> salvar(@Valid @RequestBody Sale venda) {
-		
-		Sale vendaSalva = vendaService.salvar(venda);
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
-	}
+        if (sale.isPresent()) {
+            return ResponseEntity.ok(sale.get());
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Sale> create(@Valid @RequestBody Sale sale) {
+        Sale savedSale = saleService.save(sale);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedSale);
+    }
 }

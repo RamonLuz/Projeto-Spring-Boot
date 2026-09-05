@@ -2,7 +2,6 @@ package com.livrotech.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,73 +11,72 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Venda")
+@Table(name = "sales")
 public class Sale {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	private Customer cliente;
+    @ManyToOne
+    private Customer customer;
 
-	@ManyToOne
-	private Employee funcionario;
+    @ManyToOne
+    private Employee employee;
 
-	@ManyToOne
-	private Book livro;
+    @ManyToOne
+    private Book book;
 
-	@Column(nullable = false)
-	private LocalDate dataVenda = LocalDate.now();
+    @Column(nullable = false)
+    private LocalDate saleDate = LocalDate.now();
 
-	public Sale() {
-	}
+    public Sale() {
+    }
 
-	public Sale(Long id, Customer cliente, Employee funcionario, Book livro) {
-		this.id = id;
-		this.cliente = cliente;
-		this.funcionario = funcionario;
-		this.livro = livro;
-	}
+    public Sale(Long id, Customer customer, Employee employee, Book book) {
+        this.id = id;
+        this.customer = customer;
+        this.employee = employee;
+        this.book = book;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Customer getCliente() {
-		return cliente;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public void setCliente(Customer cliente) {
-		this.cliente = cliente;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public Employee getFuncionario() {
-		return funcionario;
-	}
+    public Employee getEmployee() {
+        return employee;
+    }
 
-	public void setFuncionario(Employee funcionario) {
-		this.funcionario = funcionario;
-	}
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
-	public Book getLivro() {
-		return livro;
-	}
+    public Book getBook() {
+        return book;
+    }
 
-	public void setLivro(Book livro) {
-		this.livro = livro;
-	}
+    public void setBook(Book book) {
+        this.book = book;
+    }
 
-	public LocalDate getDataVenda() {
-		return dataVenda;
-	}
+    public LocalDate getSaleDate() {
+        return saleDate;
+    }
 
-	public void setDataVenda(LocalDate dataVenda) {
-		this.dataVenda = dataVenda;
-	}
-
+    public void setSaleDate(LocalDate saleDate) {
+        this.saleDate = saleDate;
+    }
 }

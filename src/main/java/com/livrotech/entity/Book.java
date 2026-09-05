@@ -2,10 +2,15 @@ package com.livrotech.entity;
 
 import java.util.Objects;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "livros")
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -13,22 +18,22 @@ public class Book {
     private Long id;
 
     @Column(nullable = false)
-    private String titulo;
+    private String title;
 
     @Column(nullable = false)
-    private String autor;
+    private String author;
 
     @Column(nullable = false)
-    private Double preco;
+    private Double price;
 
     public Book() {
     }
 
-    public Book(Long id, String titulo, String autor, Double preco) {
+    public Book(Long id, String title, String author, Double price) {
         this.id = id;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.preco = preco;
+        this.title = title;
+        this.author = author;
+        this.price = price;
     }
 
     public Long getId() {
@@ -39,46 +44,44 @@ public class Book {
         this.id = id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public Double getPreco() {
-        return preco;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setPreco(Double preco) {
-        this.preco = preco;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(autor, titulo);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(author, title);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Book other = (Book) obj;
-		return Objects.equals(autor, other.autor) && Objects.equals(titulo, other.titulo);
-	}
-    
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Book other = (Book) obj;
+        return Objects.equals(author, other.author) && Objects.equals(title, other.title);
+    }
 }

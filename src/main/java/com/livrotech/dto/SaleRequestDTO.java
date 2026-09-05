@@ -8,48 +8,46 @@ import com.livrotech.entity.Employee;
 
 public class SaleRequestDTO {
 
-	
-	private Customer cliente;
-	
-	private Employee funcionario;
-	
-	private Book livro;
-	
-	private LocalDate dataVenda;
+    private Customer customer;
 
-	public SaleRequestDTO() {
-	}
+    private Employee employee;
 
-	public Customer getCliente() {
-		return cliente;
-	}
+    private Book book;
 
-	public void setCliente(Customer cliente) {
-		this.cliente = cliente;
-	}
+    private LocalDate saleDate;
 
-	public Employee getFuncionario() {
-		return funcionario;
-	}
+    public SaleRequestDTO() {
+    }
 
-	public void setFuncionario(Employee funcionario) {
-		this.funcionario = funcionario;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public Book getLivro() {
-		return livro;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public void setLivro(Book livro) {
-		this.livro = livro;
-	}
+    public Employee getEmployee() {
+        return employee;
+    }
 
-	public LocalDate getDataVenda() {
-		return dataVenda;
-	}
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
-	public void setDataVenda(LocalDate dataVenda) {
-		this.dataVenda = dataVenda;
-	}
+    public Book getBook() {
+        return book;
+    }
 
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public LocalDate getSaleDate() {
+        return saleDate;
+    }
+
+    public void setSaleDate(LocalDate saleDate) {
+        this.saleDate = saleDate;
+    }
 }

@@ -2,34 +2,34 @@ package com.livrotech.dto;
 
 import java.util.List;
 
+import com.livrotech.entity.Book;
 import com.livrotech.entity.Person;
-import com.livrotech.entity.Sale;
 
 import jakarta.validation.constraints.NotBlank;
 
 public class CustomerRequestDTO extends Person {
 
-	@NotBlank(message = "Status é obrigatório")
-	private String status;
-	
-	private List<Sale> compras;
+    @NotBlank(message = "Status is required")
+    private String status;
 
-	public CustomerRequestDTO() {}
+    private List<Book> purchases;
 
-	public String getStatus() {
-		return status;
-	}
+    public CustomerRequestDTO() {
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public List<Sale> getCompras() {
-		return compras;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setCompras(List<Sale> compras) {
-		this.compras = compras;
-	}
+    public List<Book> getPurchases() {
+        return purchases;
+    }
 
+    public void setPurchases(List<Book> purchases) {
+        this.purchases = purchases;
+    }
 }

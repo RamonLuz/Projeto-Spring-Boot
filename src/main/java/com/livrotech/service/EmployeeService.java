@@ -6,61 +6,53 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.livrotech.entity.ApiException;
-import com.livrotech.entity.Customer;
 import com.livrotech.entity.Employee;
 import com.livrotech.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
 
-	private final EmployeeRepository funcionarioRepository;
+    private final EmployeeRepository employeeRepository;
 
-	public EmployeeService(EmployeeRepository funcionarioRepository) {
-		this.funcionarioRepository = funcionarioRepository;
-	}
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
-	public Employee salvar(Employee funcionario) {
+    public Employee save(Employee employee) {
+        if (employee.getCpf() == null || employee.getCpf().length() < 11) {
+            throw new ApiException(400, "CPF must have 11 digits", "CPF");
+        }
 
-		if (funcionario.getCpf() == null || funcionario.getCpf().length() < 11) {
-			throw new ApiException(400, "Cpf deve ter 11 digitos", "CPF");
-		}
+        return employeeRepository.save(employee);
+    }
 
-		return funcionarioRepository.save(funcionario);
-	}
+    public List<Employee> listAll() {
+        return employeeRepository.findAll();
+    }
 
-	public List<Employee> listar() {
-		return funcionarioRepository.findAll();
-	}
+    public Optional<Employee> findById(Long id) {
+        return employeeRepository.findById(id);
+    }
 
-	public Optional<Employee> buscarPorId(Long id) {
-		return funcionarioRepository.findById(id);
-	}
-	
-	public Optional<Employee> atualizar(Long id, Employee funcionarioAtualizado) {
+    public Optional<Employee> update(Long id, Employee updatedEmployee) {
+        Optional<Employee> existingEmployee = employeeRepository.findById(id);
 
-		Optional<Employee> funcionarioExistente = funcionarioRepository.findById(id);
+        if (existingEmployee.isPresent()) {
+            Employee employee = existingEmployee.get();
+            employee.setStatus(updatedEmployee.getStatus());
+            employeeRepository.save(employee);
+            return Optional.of(employee);
+        }
 
-		if (funcionarioExistente.isPresent()) {
+        return Optional.empty();
+    }
 
-			Employee funcionario = funcionarioExistente.get();
+    public boolean delete(Long id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return true;
+        }
 
-			funcionario.setStatus(funcionarioAtualizado.getStatus());
-
-			funcionarioRepository.save(funcionario);
-
-			return Optional.of(funcionario);
-		}
-
-		return Optional.empty();
-	}
-
-	public boolean deletar(Long id) {
-
-		if (funcionarioRepository.existsById(id)) {
-			funcionarioRepository.deleteById(id);
-			return true;
-		}
-
-		return false;
-	}
+        return false;
+    }
 }

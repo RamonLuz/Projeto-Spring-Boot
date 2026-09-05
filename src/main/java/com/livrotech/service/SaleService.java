@@ -18,62 +18,61 @@ import com.livrotech.repository.SaleRepository;
 @Service
 public class SaleService {
 
-	private final CustomerRepository clienteRepository;
-	private final EmployeeRepository funcionarioRepository;
-	private final BookRepository livroRepository;
-	private final SaleRepository vendaRepository;
+    private final CustomerRepository customerRepository;
+    private final EmployeeRepository employeeRepository;
+    private final BookRepository bookRepository;
+    private final SaleRepository saleRepository;
 
-	public SaleService(SaleRepository vendaRepository, CustomerRepository customeRepository,
-			BookRepository livroRepository, EmployeeRepository funcionarioRepository) {
-		this.funcionarioRepository = funcionarioRepository;
-		this.livroRepository = livroRepository;
-		this.vendaRepository = vendaRepository;
-		this.clienteRepository = customeRepository;
-	}
+    public SaleService(SaleRepository saleRepository, CustomerRepository customerRepository,
+            BookRepository bookRepository, EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+        this.bookRepository = bookRepository;
+        this.saleRepository = saleRepository;
+        this.customerRepository = customerRepository;
+    }
 
-	public List<Sale> listar() {
-		return vendaRepository.findAll();
-	}
+    public List<Sale> listAll() {
+        return saleRepository.findAll();
+    }
 
-	public Optional<Sale> buscarPorId(Long id) {
-		return vendaRepository.findById(id);
-	}
+    public Optional<Sale> findById(Long id) {
+        return saleRepository.findById(id);
+    }
 
-	public Sale salvar(Sale venda) {
+    public Sale save(Sale sale) {
+        Customer customer = customerRepository.findByCpf(sale.getCustomer().getCpf())
+                .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
 
-		Customer cliente = clienteRepository.findByCpf(venda.getCliente().getCpf())
-				.orElseThrow(() -> new ApiException(400, "Cliente não existe", "Body"));
+        Book book = bookRepository.findAll().stream()
+                .filter(currentBook -> currentBook.equals(sale.getBook()))
+                .findFirst()
+                .orElseThrow(() -> new ApiException(400, "Book does not exist", "Body"));
 
-		Book livro = livroRepository.findAll().stream().filter(l -> l.equals(venda.getLivro())).findFirst()
-				.orElseThrow(() -> new ApiException(400, "Livro não existe", "Body"));
+        Employee employee = employeeRepository.findAll().stream()
+                .filter(currentEmployee -> currentEmployee.equals(sale.getEmployee()))
+                .findFirst()
+                .orElseThrow(() -> new ApiException(400, "Employee does not exist", "Body"));
 
-		Employee funcionario = funcionarioRepository.findAll().stream().filter(f -> f.equals(venda.getFuncionario()))
-				.findFirst().orElseThrow(() -> new ApiException(400, "Funcionario não existe", "Body"));
+        sale.setCustomer(customer);
+        sale.setBook(book);
+        sale.setEmployee(employee);
 
-		venda.setCliente(cliente);
-		venda.setLivro(livro);
-		venda.setFuncionario(funcionario);
+        syncCustomerPurchases(sale);
+        return saleRepository.save(sale);
+    }
 
-		sincronizarCliente(venda);
+    private void syncCustomerPurchases(Sale sale) {
+        Optional<Customer> existingCustomer = customerRepository.findByCpf(sale.getCustomer().getCpf());
 
-		return vendaRepository.save(venda);
-	}
-
-	private void sincronizarCliente(Sale venda) {
-		Optional<Customer> clienteExiste = clienteRepository.findByCpf(venda.getCliente().getCpf());
-
-		List<Book> livros = livroRepository.findByTitulo(venda.getLivro().getTitulo());
-
-		Book livro = livros.get(0);
-
-		if (clienteExiste.isPresent()) {
-
-			Customer cliente = clienteExiste.get();
-
-			cliente.getCompras().add(livro);
-
-		}
-
-	}
-
+        if (existingCustomer.isPresent()) {
+            List<Book> books = bookRepository.findByTitle(sale.getBook().getTitle());
+            if (!books.isEmpty()) {
+                Book book = books.get(0);
+                Customer customer = existingCustomer.get();
+                if (customer.getPurchases() != null) {
+                    customer.getPurchases().add(book);
+                }
+            }
+        }
+    }
 }

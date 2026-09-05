@@ -4,51 +4,45 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Cliente")
+@Table(name = "customers")
 public class Customer extends Person {
 
-	@Column(nullable = false)
-	private String status;
-	
-	@OneToMany
-	private List<Book> compras;
+    @Column(nullable = false)
+    private String status;
 
-	public Customer(String nome, String cpf, String status, List<Book> compras) {
-		
-		super(nome, cpf);
-		this.status = status;
-		this.compras = compras;
-	}
+    @OneToMany
+    private List<Book> purchases;
 
-	public Customer(String nome, String cpf) {
-		super(nome, cpf);
-	}
+    public Customer(String name, String cpf, String status, List<Book> purchases) {
+        super(name, cpf);
+        this.status = status;
+        this.purchases = purchases;
+    }
 
-	public Customer() {
-	}
+    public Customer(String name, String cpf) {
+        super(name, cpf);
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public Customer() {
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public List<Book> getCompras() {
-		return compras;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setCompras(List<Book> compras) {
-		this.compras = compras;
-	}
-	
+    public List<Book> getPurchases() {
+        return purchases;
+    }
 
+    public void setPurchases(List<Book> purchases) {
+        this.purchases = purchases;
+    }
 }

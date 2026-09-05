@@ -21,73 +21,63 @@ import com.livrotech.service.BookService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/Books")
+@RequestMapping("/books")
 public class BookController {
 
-    private final BookService livroService;
+    private final BookService bookService;
 
-    public BookController(BookService livroService) {
-        this.livroService = livroService;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> listar() {
-        List<Book> livros = livroService.listar();
-        return ResponseEntity.ok(livros);
+    public ResponseEntity<List<Book>> getAll() {
+        return ResponseEntity.ok(bookService.listAll());
     }
 
     @PostMapping
-    public ResponseEntity<Book> salvar(@Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<Book> create(@Valid @RequestBody BookRequestDTO dto) {
+        Book book = new Book();
+        book.setTitle(dto.getTitle());
+        book.setAuthor(dto.getAuthor());
+        book.setPrice(dto.getPrice());
 
-        Book livro = new Book();
-
-        livro.setTitulo(dto.getTitulo());
-        livro.setAutor(dto.getAutor());
-        livro.setPreco(dto.getPreco());
-
-        Book livroSalvo = livroService.salvar(livro);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(livroSalvo);
+        Book savedBook = bookService.save(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Book> getById(@PathVariable Long id) {
+        Optional<Book> book = bookService.findById(id);
 
-        Optional<Book> livro = livroService.buscarPorId(id);
-
-        if (livro.isPresent()) {
-            return ResponseEntity.ok(livro.get());
+        if (book.isPresent()) {
+            return ResponseEntity.ok(book.get());
         }
 
         return ResponseEntity.notFound().build();
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<Book> atualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<Book> update(@PathVariable Long id, @Valid @RequestBody BookRequestDTO dto) {
+        Book book = new Book();
+        book.setTitle(dto.getTitle());
+        book.setAuthor(dto.getAuthor());
+        book.setPrice(dto.getPrice());
 
-        Book livro = new Book();
+        Optional<Book> updatedBook = bookService.update(id, book);
 
-        livro.setTitulo(dto.getTitulo());
-        livro.setAutor(dto.getAutor());
-        livro.setPreco(dto.getPreco());
-
-        Optional<Book> livroAtualizado = livroService.atualizar(id, livro);
-
-        if (livroAtualizado.isPresent()) {
-            return ResponseEntity.ok(livroAtualizado.get());
+        if (updatedBook.isPresent()) {
+            return ResponseEntity.ok(updatedBook.get());
         }
 
         return ResponseEntity.notFound().build();
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        boolean removed = bookService.delete(id);
 
-        boolean removido = livroService.deletar(id);
-
-        if (removido) {
+        if (removed) {
             return ResponseEntity.noContent().build();
         }
 

@@ -4,80 +4,75 @@ import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Funcionarios")
+@Table(name = "employees")
 public class Employee extends Person {
 
-	@Column(nullable = false)
-	private int matricula;
+    @Column(nullable = false)
+    private int registrationNumber;
 
-	@Column(nullable = false)
-	private String cargo;
+    @Column(nullable = false)
+    private String position;
 
-	@Column(nullable = false)
-	private String status;
+    @Column(nullable = false)
+    private String status;
 
-	public Employee(String nome, String cpf, int matricula, String cargo, String status) {
-		super(nome, cpf);
-		this.matricula = matricula;
-		this.cargo = cargo;
-		this.status = status;
-	}
+    public Employee(String name, String cpf, int registrationNumber, String position, String status) {
+        super(name, cpf);
+        this.registrationNumber = registrationNumber;
+        this.position = position;
+        this.status = status;
+    }
 
-	public Employee() {
-	}
+    public Employee() {
+    }
 
-	public int getMatricula() {
-		return matricula;
-	}
+    public int getRegistrationNumber() {
+        return registrationNumber;
+    }
 
-	public void setMatricula(int matricula) {
-		this.matricula = matricula;
-	}
+    public void setRegistrationNumber(int registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
 
-	public String getCargo() {
-		return cargo;
-	}
+    public String getPosition() {
+        return position;
+    }
 
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(matricula);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(registrationNumber);
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Employee other = (Employee) obj;
-		return matricula == other.matricula;
-	}
-
-	
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || !super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Employee other = (Employee) obj;
+        return registrationNumber == other.registrationNumber;
+    }
 }

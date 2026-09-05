@@ -12,67 +12,57 @@ import com.livrotech.repository.CustomerRepository;
 @Service
 public class CustomerService {
 
-	private final CustomerRepository clienteRepository;
+    private final CustomerRepository customerRepository;
 
-	public CustomerService(CustomerRepository clienteRepository) {
-		this.clienteRepository = clienteRepository;
-		
-	}
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
-	public Customer salvar(Customer cliente) {
-		
-		Optional<Customer> clienteExiste = clienteRepository.findByCpf(cliente.getCpf());
-		
-		if(clienteExiste.isPresent()) {
-			Customer clienteExistente = clienteExiste.get();
-			if(clienteExistente.equals(cliente)) {
-				throw new ApiException(400, "Cpf ja cadastrado", "CPF");
-			}
-		}
-		if(cliente.getCpf() == null ||cliente.getCpf().length() < 11) {
-			throw new ApiException(400, "Cpf deve ter 11 digitos", "CPF");
-		}
+    public Customer save(Customer customer) {
+        Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
 
-		return clienteRepository.save(cliente);
-	}
+        if (existingCustomer.isPresent() && existingCustomer.get().equals(customer)) {
+            throw new ApiException(400, "CPF already registered", "CPF");
+        }
 
-	public List<Customer> listar() {
-		return clienteRepository.findAll();
-	}
+        if (customer.getCpf() == null || customer.getCpf().length() < 11) {
+            throw new ApiException(400, "CPF must have 11 digits", "CPF");
+        }
 
-	public Optional<Customer> buscarPorId(Long id) {
-		return clienteRepository.findById(id);
-	}
-	
-	public Optional<Customer> buscarPorCpf(String cpf) {
-		return clienteRepository.findByCpf(cpf);
-	}
-	
-	public Optional<Customer> atualizar(Long id, Customer clienteAtualizado) {
+        return customerRepository.save(customer);
+    }
 
-		Optional<Customer> clienteExistente = clienteRepository.findById(id);
+    public List<Customer> listAll() {
+        return customerRepository.findAll();
+    }
 
-		if (clienteExistente.isPresent()) {
+    public Optional<Customer> findById(Long id) {
+        return customerRepository.findById(id);
+    }
 
-			Customer cliente = clienteExistente.get();
+    public Optional<Customer> findByCpf(String cpf) {
+        return customerRepository.findByCpf(cpf);
+    }
 
-			cliente.setStatus(clienteAtualizado.getStatus());
+    public Optional<Customer> update(Long id, Customer updatedCustomer) {
+        Optional<Customer> existingCustomer = customerRepository.findById(id);
 
-			clienteRepository.save(cliente);
+        if (existingCustomer.isPresent()) {
+            Customer customer = existingCustomer.get();
+            customer.setStatus(updatedCustomer.getStatus());
+            customerRepository.save(customer);
+            return Optional.of(customer);
+        }
 
-			return Optional.of(cliente);
-		}
+        return Optional.empty();
+    }
 
-		return Optional.empty();
-	}
+    public boolean delete(Long id) {
+        if (customerRepository.existsById(id)) {
+            customerRepository.deleteById(id);
+            return true;
+        }
 
-	public boolean deletar(Long id) {
-
-		if (clienteRepository.existsById(id)) {
-			clienteRepository.deleteById(id);
-			return true;
-		}
-
-		return false;
-	}
+        return false;
+    }
 }
