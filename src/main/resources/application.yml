@@ -10,7 +10,7 @@ spring:
 
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
 
   jpa:
@@ -29,3 +29,14 @@ server:
 logging:
   level:
     org.hibernate.SQL: DEBUG
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  h2:
+    console:
+      enabled: true
