@@ -141,7 +141,17 @@ spring:
     password:
 ```
 
+  As configurações são separadas por ambiente nos perfis `dev`, `test` e `prod`.
+  O perfil `dev` é usado por padrão. Para iniciar com outro perfil:
+
+  ```bash
+  ./mvnw spring-boot:run -Dspring-boot.run.profiles=test
+  ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
+  ```
+
 ### Console H2
+
+  Disponível somente no perfil `dev`:
 
 ```
 http://localhost:8080/h2-console
