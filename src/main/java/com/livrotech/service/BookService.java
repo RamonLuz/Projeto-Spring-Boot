@@ -23,28 +23,62 @@ public class BookService {
     }
 
     public Book save(Book book) {
-        List<Book> books = bookRepository.findAll();
-
         if (book == null) {
             throw new ApiException(400, "Book is invalid", "Body");
         }
 
-        if (books.contains(book)) {
-            throw new ApiException(400, "Book already exists for this author and title", "Body");
+        if (book.getTitle() == null || book.getTitle().isBlank()) {
+            throw new ApiException(400, "Title is required", "Body");
+        }
+
+        if (book.getAuthor() == null || book.getAuthor().isBlank()) {
+            throw new ApiException(400, "Author is required", "Body");
         }
 
         if (book.getPrice() == null || book.getPrice() <= 0) {
             throw new ApiException(400, "Price is invalid", "Body");
         }
 
+        List<Book> books = bookRepository.findAll();
+        boolean alreadyExists = books.stream()
+                .anyMatch(existingBook -> existingBook.getTitle().equalsIgnoreCase(book.getTitle())
+                        && existingBook.getAuthor().equalsIgnoreCase(book.getAuthor()));
+
+        if (alreadyExists) {
+            throw new ApiException(400, "Book already exists for this title and author", "Body");
+        }
+
         return bookRepository.save(book);
     }
 
     public Optional<Book> findById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return bookRepository.findById(id);
     }
 
     public Optional<Book> update(Long id, Book updatedBook) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        if (updatedBook == null) {
+            throw new ApiException(400, "Book is invalid", "Body");
+        }
+
+        if (updatedBook.getTitle() == null || updatedBook.getTitle().isBlank()) {
+            throw new ApiException(400, "Title is required", "Body");
+        }
+
+        if (updatedBook.getAuthor() == null || updatedBook.getAuthor().isBlank()) {
+            throw new ApiException(400, "Author is required", "Body");
+        }
+
+        if (updatedBook.getPrice() == null || updatedBook.getPrice() <= 0) {
+            throw new ApiException(400, "Price is invalid", "Body");
+        }
+
         Optional<Book> existingBook = bookRepository.findById(id);
 
         if (existingBook.isPresent()) {
@@ -61,6 +95,10 @@ public class BookService {
     }
 
     public boolean delete(Long id) {
+        if (id == null) {
+            return false;
+        }
+
         if (bookRepository.existsById(id)) {
             bookRepository.deleteById(id);
             return true;

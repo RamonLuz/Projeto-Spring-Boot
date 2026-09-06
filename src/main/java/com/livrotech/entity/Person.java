@@ -7,8 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @MappedSuperclass
+@Getter
+@Setter
+@NoArgsConstructor
 public abstract class Person {
 
     @Id
@@ -23,29 +29,6 @@ public abstract class Person {
 
     public Person(String name, String cpf) {
         this.name = name;
-        this.cpf = cpf;
-    }
-
-    public Person() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 

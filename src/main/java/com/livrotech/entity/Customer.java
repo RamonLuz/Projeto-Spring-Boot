@@ -6,9 +6,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "customers")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Customer extends Person {
 
     @Column(nullable = false)
@@ -25,24 +31,5 @@ public class Customer extends Person {
 
     public Customer(String name, String cpf) {
         super(name, cpf);
-    }
-
-    public Customer() {
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<Book> getPurchases() {
-        return purchases;
-    }
-
-    public void setPurchases(List<Book> purchases) {
-        this.purchases = purchases;
     }
 }

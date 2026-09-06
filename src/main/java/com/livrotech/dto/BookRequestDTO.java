@@ -3,7 +3,13 @@ package com.livrotech.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class BookRequestDTO {
 
     @NotBlank(message = "Title is required")
@@ -15,31 +21,4 @@ public class BookRequestDTO {
     @Positive(message = "Price must be greater than zero")
     @NotNull(message = "Price is required")
     private Double price;
-
-    public BookRequestDTO() {
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
 }

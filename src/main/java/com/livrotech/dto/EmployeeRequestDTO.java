@@ -3,7 +3,13 @@ package com.livrotech.dto;
 import com.livrotech.entity.Person;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class EmployeeRequestDTO extends Person {
 
     private int registrationNumber;
@@ -13,31 +19,4 @@ public class EmployeeRequestDTO extends Person {
 
     @NotBlank(message = "Status is required")
     private String status;
-
-    public EmployeeRequestDTO() {
-    }
-
-    public int getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(int registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

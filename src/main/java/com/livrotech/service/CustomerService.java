@@ -19,14 +19,25 @@ public class CustomerService {
     }
 
     public Customer save(Customer customer) {
-        Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
-
-        if (existingCustomer.isPresent() && existingCustomer.get().equals(customer)) {
-            throw new ApiException(400, "CPF already registered", "CPF");
+        if (customer == null) {
+            throw new ApiException(400, "Customer is invalid", "Body");
         }
 
-        if (customer.getCpf() == null || customer.getCpf().length() < 11) {
+        if (customer.getName() == null || customer.getName().isBlank()) {
+            throw new ApiException(400, "Name is required", "Name");
+        }
+
+        if (customer.getCpf() == null || customer.getCpf().isBlank() || customer.getCpf().length() != 11) {
             throw new ApiException(400, "CPF must have 11 digits", "CPF");
+        }
+
+        if (customer.getStatus() == null || customer.getStatus().isBlank()) {
+            throw new ApiException(400, "Status is required", "Status");
+        }
+
+        Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
+        if (existingCustomer.isPresent()) {
+            throw new ApiException(400, "CPF already registered", "CPF");
         }
 
         return customerRepository.save(customer);
@@ -37,14 +48,32 @@ public class CustomerService {
     }
 
     public Optional<Customer> findById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return customerRepository.findById(id);
     }
 
     public Optional<Customer> findByCpf(String cpf) {
+        if (cpf == null || cpf.isBlank()) {
+            return Optional.empty();
+        }
         return customerRepository.findByCpf(cpf);
     }
 
     public Optional<Customer> update(Long id, Customer updatedCustomer) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        if (updatedCustomer == null) {
+            throw new ApiException(400, "Customer is invalid", "Body");
+        }
+
+        if (updatedCustomer.getStatus() == null || updatedCustomer.getStatus().isBlank()) {
+            throw new ApiException(400, "Status is required", "Status");
+        }
+
         Optional<Customer> existingCustomer = customerRepository.findById(id);
 
         if (existingCustomer.isPresent()) {
@@ -58,6 +87,10 @@ public class CustomerService {
     }
 
     public boolean delete(Long id) {
+        if (id == null) {
+            return false;
+        }
+
         if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
             return true;

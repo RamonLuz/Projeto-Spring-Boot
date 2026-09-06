@@ -19,8 +19,24 @@ public class EmployeeService {
     }
 
     public Employee save(Employee employee) {
-        if (employee.getCpf() == null || employee.getCpf().length() < 11) {
+        if (employee == null) {
+            throw new ApiException(400, "Employee is invalid", "Body");
+        }
+
+        if (employee.getName() == null || employee.getName().isBlank()) {
+            throw new ApiException(400, "Name is required", "Name");
+        }
+
+        if (employee.getCpf() == null || employee.getCpf().isBlank() || employee.getCpf().length() != 11) {
             throw new ApiException(400, "CPF must have 11 digits", "CPF");
+        }
+
+        if (employee.getPosition() == null || employee.getPosition().isBlank()) {
+            throw new ApiException(400, "Position is required", "Position");
+        }
+
+        if (employee.getStatus() == null || employee.getStatus().isBlank()) {
+            throw new ApiException(400, "Status is required", "Status");
         }
 
         return employeeRepository.save(employee);
@@ -31,10 +47,25 @@ public class EmployeeService {
     }
 
     public Optional<Employee> findById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return employeeRepository.findById(id);
     }
 
     public Optional<Employee> update(Long id, Employee updatedEmployee) {
+        if (id == null) {
+            return Optional.empty();
+        }
+
+        if (updatedEmployee == null) {
+            throw new ApiException(400, "Employee is invalid", "Body");
+        }
+
+        if (updatedEmployee.getStatus() == null || updatedEmployee.getStatus().isBlank()) {
+            throw new ApiException(400, "Status is required", "Status");
+        }
+
         Optional<Employee> existingEmployee = employeeRepository.findById(id);
 
         if (existingEmployee.isPresent()) {
@@ -48,6 +79,10 @@ public class EmployeeService {
     }
 
     public boolean delete(Long id) {
+        if (id == null) {
+            return false;
+        }
+
         if (employeeRepository.existsById(id)) {
             employeeRepository.deleteById(id);
             return true;

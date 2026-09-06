@@ -5,9 +5,15 @@ import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "employees")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Employee extends Person {
 
     @Column(nullable = false)
@@ -23,33 +29,6 @@ public class Employee extends Person {
         super(name, cpf);
         this.registrationNumber = registrationNumber;
         this.position = position;
-        this.status = status;
-    }
-
-    public Employee() {
-    }
-
-    public int getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public void setRegistrationNumber(int registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
     }
 
