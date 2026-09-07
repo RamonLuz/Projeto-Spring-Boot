@@ -2,9 +2,8 @@ package com.livrotech.dto;
 
 import java.time.LocalDate;
 
-import com.livrotech.entity.Book;
-import com.livrotech.entity.Customer;
-import com.livrotech.entity.Employee;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,11 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SaleRequestDTO {
 
-    private Customer customer;
+    @NotBlank(message = "Customer CPF is required")
+    private String customerCpf;
 
-    private Employee employee;
+    @NotNull(message = "Employee is required")
+    private Long employeeId;
 
-    private Book book;
+    @NotNull(message = "Book is required")
+    private Long bookId;
 
     private LocalDate saleDate;
 }

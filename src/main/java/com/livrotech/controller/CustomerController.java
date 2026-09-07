@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.CustomerRequestDTO;
+import com.livrotech.dto.BookResponseDTO;
+import com.livrotech.dto.CustomerResponseDTO;
 import com.livrotech.entity.Customer;
 import com.livrotech.service.CustomerService;
 
@@ -31,47 +33,47 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAll() {
+    public ResponseEntity<List<CustomerResponseDTO>> getAll() {
         List<Customer> customers = customerService.listAll();
 
         if (customers.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(customers);
+        return ResponseEntity.ok(customers.stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getById(@PathVariable Long id) {
+    public ResponseEntity<CustomerResponseDTO> getById(@PathVariable Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isPresent()) {
-            return ResponseEntity.ok(customer.get());
+            return ResponseEntity.ok(toResponse(customer.get()));
         }
 
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequestDTO dto) {
+    public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO dto) {
         Customer customer = new Customer();
         customer.setName(dto.getName());
         customer.setCpf(dto.getCpf());
         customer.setStatus(dto.getStatus());
 
         Customer savedCustomer = customerService.save(customer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedCustomer));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> update(@PathVariable Long id, @Valid @RequestBody CustomerRequestDTO dto) {
+    public ResponseEntity<CustomerResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CustomerRequestDTO dto) {
         Customer customer = new Customer();
         customer.setStatus(dto.getStatus());
 
         Optional<Customer> updatedCustomer = customerService.update(id, customer);
 
         if (updatedCustomer.isPresent()) {
-            return ResponseEntity.ok(updatedCustomer.get());
+            return ResponseEntity.ok(toResponse(updatedCustomer.get()));
         }
 
         return ResponseEntity.notFound().build();
@@ -86,5 +88,15 @@ public class CustomerController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    private CustomerResponseDTO toResponse(Customer customer) {
+        List<BookResponseDTO> purchases = customer.getPurchases() == null
+                ? List.of()
+                : customer.getPurchases().stream()
+                        .map(book -> new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice()))
+                        .toList();
+
+        return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getCpf(), customer.getStatus(), purchases);
     }
 }
