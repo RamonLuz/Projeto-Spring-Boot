@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.BookRequestDTO;
+import com.livrotech.dto.BookResponseDTO;
 import com.livrotech.entity.Book;
 import com.livrotech.service.BookService;
 
@@ -31,34 +32,34 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAll() {
-        return ResponseEntity.ok(bookService.listAll());
+    public ResponseEntity<List<BookResponseDTO>> getAll() {
+        return ResponseEntity.ok(bookService.listAll().stream().map(this::toResponse).toList());
     }
 
     @PostMapping
-    public ResponseEntity<Book> create(@Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<BookResponseDTO> create(@Valid @RequestBody BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setAuthor(dto.getAuthor());
         book.setPrice(dto.getPrice());
 
         Book savedBook = bookService.save(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedBook));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getById(@PathVariable Long id) {
+    public ResponseEntity<BookResponseDTO> getById(@PathVariable Long id) {
         Optional<Book> book = bookService.findById(id);
 
         if (book.isPresent()) {
-            return ResponseEntity.ok(book.get());
+            return ResponseEntity.ok(toResponse(book.get()));
         }
 
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> update(@PathVariable Long id, @Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<BookResponseDTO> update(@PathVariable Long id, @Valid @RequestBody BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setAuthor(dto.getAuthor());
@@ -67,10 +68,14 @@ public class BookController {
         Optional<Book> updatedBook = bookService.update(id, book);
 
         if (updatedBook.isPresent()) {
-            return ResponseEntity.ok(updatedBook.get());
+            return ResponseEntity.ok(toResponse(updatedBook.get()));
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    private BookResponseDTO toResponse(Book book) {
+        return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice());
     }
 
     @DeleteMapping("/{id}")

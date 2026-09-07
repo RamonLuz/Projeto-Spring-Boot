@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.livrotech.dto.SaleRequestDTO;
+import com.livrotech.dto.SaleResponseDTO;
+import com.livrotech.entity.Book;
+import com.livrotech.entity.Customer;
+import com.livrotech.entity.Employee;
 import com.livrotech.entity.Sale;
 import com.livrotech.service.SaleService;
 
@@ -28,24 +33,46 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Sale>> getAll() {
-        return ResponseEntity.ok(saleService.listAll());
+    public ResponseEntity<List<SaleResponseDTO>> getAll() {
+        return ResponseEntity.ok(saleService.listAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sale> getById(@PathVariable Long id) {
+    public ResponseEntity<SaleResponseDTO> getById(@PathVariable Long id) {
         Optional<Sale> sale = saleService.findById(id);
 
         if (sale.isPresent()) {
-            return ResponseEntity.ok(sale.get());
+            return ResponseEntity.ok(toResponse(sale.get()));
         }
 
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Sale> create(@Valid @RequestBody Sale sale) {
+    public ResponseEntity<SaleResponseDTO> create(@Valid @RequestBody SaleRequestDTO dto) {
+        Customer customer = new Customer();
+        customer.setCpf(dto.getCustomerCpf());
+
+        Employee employee = new Employee();
+        employee.setId(dto.getEmployeeId());
+
+        Book book = new Book();
+        book.setId(dto.getBookId());
+
+        Sale sale = new Sale();
+        sale.setCustomer(customer);
+        sale.setEmployee(employee);
+        sale.setBook(book);
+        if (dto.getSaleDate() != null) {
+            sale.setSaleDate(dto.getSaleDate());
+        }
+
         Sale savedSale = saleService.save(sale);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedSale);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedSale));
+    }
+
+    private SaleResponseDTO toResponse(Sale sale) {
+        return new SaleResponseDTO(sale.getId(), sale.getCustomer().getId(), sale.getCustomer().getCpf(),
+                sale.getEmployee().getId(), sale.getBook().getId(), sale.getSaleDate());
     }
 }
