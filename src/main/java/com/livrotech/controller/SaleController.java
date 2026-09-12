@@ -51,7 +51,11 @@ public class SaleController {
     @PostMapping
     public ResponseEntity<SaleResponseDTO> create(@Valid @RequestBody SaleRequestDTO dto) {
         Customer customer = new Customer();
-        customer.setCpf(dto.getCustomerCpf());
+        if (dto.getCustomerId() != null) {
+            customer.setId(dto.getCustomerId());
+        } else if (dto.getCustomerCpf() != null && !dto.getCustomerCpf().isBlank()) {
+            customer.setCpf(dto.getCustomerCpf());
+        }
 
         Employee employee = new Employee();
         employee.setId(dto.getEmployeeId());

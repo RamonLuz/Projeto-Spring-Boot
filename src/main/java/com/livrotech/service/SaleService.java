@@ -48,8 +48,9 @@ public class SaleService {
             throw new ApiException(400, "Sale is invalid", "Body");
         }
 
-        if (sale.getCustomer() == null || sale.getCustomer().getCpf() == null || sale.getCustomer().getCpf().isBlank()) {
-            throw new ApiException(400, "Customer CPF is required", "Body");
+        if (sale.getCustomer() == null || (sale.getCustomer().getId() == null
+                && (sale.getCustomer().getCpf() == null || sale.getCustomer().getCpf().isBlank()))) {
+            throw new ApiException(400, "Customer is required (id or cpf)", "Body");
         }
 
         Book requestedBook = sale.getBook();
@@ -65,8 +66,14 @@ public class SaleService {
         long bookId = requestedBook.getId();
         long employeeId = requestedEmployee.getId();
 
-        Customer customer = customerRepository.findByCpf(sale.getCustomer().getCpf())
-                .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
+        Customer customer;
+        if (sale.getCustomer().getId() != null) {
+            customer = customerRepository.findById(sale.getCustomer().getId())
+                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
+        } else {
+            customer = customerRepository.findByCpf(sale.getCustomer().getCpf())
+                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
+        }
 
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ApiException(400, "Book does not exist", "Body"));
