@@ -23,6 +23,16 @@ public class EmployeeService {
             throw new ApiException(400, "Employee is invalid", "Body");
         }
 
+        if (employee.getName() != null) {
+            employee.setName(employee.getName().trim());
+        }
+        if (employee.getCpf() != null) {
+            employee.setCpf(employee.getCpf().trim());
+        }
+        if (employee.getPosition() != null) {
+            employee.setPosition(employee.getPosition().trim());
+        }
+
         if (employee.getName() == null || employee.getName().isBlank()) {
             throw new ApiException(400, "Name is required", "Name");
         }
@@ -38,10 +48,6 @@ public class EmployeeService {
         if (employee.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
-
-        employee.setName(employee.getName().trim());
-        employee.setCpf(employee.getCpf().trim());
-        employee.setPosition(employee.getPosition().trim());
 
         if (employeeRepository.findByCpf(employee.getCpf()).isPresent()) {
             throw new ApiException(409, "CPF already registered", "cpf");

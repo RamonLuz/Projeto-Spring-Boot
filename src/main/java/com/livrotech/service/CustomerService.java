@@ -23,6 +23,13 @@ public class CustomerService {
             throw new ApiException(400, "Customer is invalid", "Body");
         }
 
+        if (customer.getName() != null) {
+            customer.setName(customer.getName().trim());
+        }
+        if (customer.getCpf() != null) {
+            customer.setCpf(customer.getCpf().trim());
+        }
+
         if (customer.getName() == null || customer.getName().isBlank()) {
             throw new ApiException(400, "Name is required", "Name");
         }
@@ -34,9 +41,6 @@ public class CustomerService {
         if (customer.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
-
-        customer.setName(customer.getName().trim());
-        customer.setCpf(customer.getCpf().trim());
 
         Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
         if (existingCustomer.isPresent()) {

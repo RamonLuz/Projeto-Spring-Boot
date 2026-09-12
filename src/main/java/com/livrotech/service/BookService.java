@@ -27,6 +27,13 @@ public class BookService {
             throw new ApiException(400, "Book is invalid", "Body");
         }
 
+        if (book.getTitle() != null) {
+            book.setTitle(book.getTitle().trim());
+        }
+        if (book.getAuthor() != null) {
+            book.setAuthor(book.getAuthor().trim());
+        }
+
         if (book.getTitle() == null || book.getTitle().isBlank()) {
             throw new ApiException(400, "Title is required", "Body");
         }
@@ -38,9 +45,6 @@ public class BookService {
         if (book.getPrice() == null || book.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new ApiException(400, "Price is invalid", "Body");
         }
-
-        book.setTitle(book.getTitle().trim());
-        book.setAuthor(book.getAuthor().trim());
 
         if (bookRepository.findByTitleIgnoreCaseAndAuthorIgnoreCase(book.getTitle(), book.getAuthor()).isPresent()) {
             throw new ApiException(409, "Book already exists for this title and author", "title");
@@ -65,6 +69,13 @@ public class BookService {
             throw new ApiException(400, "Book is invalid", "Body");
         }
 
+        if (updatedBook.getTitle() != null) {
+            updatedBook.setTitle(updatedBook.getTitle().trim());
+        }
+        if (updatedBook.getAuthor() != null) {
+            updatedBook.setAuthor(updatedBook.getAuthor().trim());
+        }
+
         if (updatedBook.getTitle() == null || updatedBook.getTitle().isBlank()) {
             throw new ApiException(400, "Title is required", "Body");
         }
@@ -76,9 +87,6 @@ public class BookService {
         if (updatedBook.getPrice() == null || updatedBook.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new ApiException(400, "Price is invalid", "Body");
         }
-
-        updatedBook.setTitle(updatedBook.getTitle().trim());
-        updatedBook.setAuthor(updatedBook.getAuthor().trim());
 
         Optional<Book> existingBook = bookRepository.findById(id);
 
