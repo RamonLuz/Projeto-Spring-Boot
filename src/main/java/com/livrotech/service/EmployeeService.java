@@ -40,11 +40,11 @@ public class EmployeeService {
         }
 
         if (employeeRepository.findByCpf(employee.getCpf()).isPresent()) {
-            throw new ApiException(400, "CPF already registered", "CPF");
+            throw new ApiException(409, "CPF already registered", "cpf");
         }
 
         if (employeeRepository.findByRegistrationNumber(employee.getRegistrationNumber()).isPresent()) {
-            throw new ApiException(400, "Registration number already registered", "RegistrationNumber");
+            throw new ApiException(409, "Registration number already registered", "registrationNumber");
         }
 
         return employeeRepository.save(employee);

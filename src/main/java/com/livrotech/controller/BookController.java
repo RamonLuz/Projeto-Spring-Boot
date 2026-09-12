@@ -20,8 +20,11 @@ import com.livrotech.entity.Book;
 import com.livrotech.service.BookService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
+@Validated
 @RequestMapping("/books")
 public class BookController {
 
@@ -48,7 +51,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<BookResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Book> book = bookService.findById(id);
 
         if (book.isPresent()) {
@@ -59,7 +62,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDTO> update(@PathVariable Long id, @Valid @RequestBody BookRequestDTO dto) {
+    public ResponseEntity<BookResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setAuthor(dto.getAuthor());
@@ -80,7 +83,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = bookService.delete(id);
 
         if (removed) {

@@ -119,8 +119,8 @@ Exemplo:
 ```json
 {
   "status": 400,
-  "message": "Cpf deve ter 11 digitos",
-  "field": "CPF"
+  "message": "CPF must have 11 digits",
+  "field": "cpf"
 }
 ```
 
@@ -151,11 +151,7 @@ spring:
 
 ### Console H2
 
-  Disponível somente no perfil `dev`:
-
-```
-http://localhost:8080/h2-console
-```
+O console H2 permanece desativado por padrão para evitar acesso direto ao banco.
 
 ---
 
@@ -165,11 +161,11 @@ http://localhost:8080/h2-console
 
 | Método | Endpoint    |
 | ------ | ----------- |
-| GET    | /Books      |
-| GET    | /Books/{id} |
-| POST   | /Books      |
-| PUT    | /Books/{id} |
-| DELETE | /Books/{id} |
+| GET    | /books      |
+| GET    | /books/{id} |
+| POST   | /books      |
+| PUT    | /books/{id} |
+| DELETE | /books/{id} |
 
 ---
 
@@ -177,11 +173,11 @@ http://localhost:8080/h2-console
 
 | Método | Endpoint       |
 | ------ | -------------- |
-| GET    | /Customer      |
-| GET    | /Customer/{id} |
-| POST   | /Customer      |
-| PUT    | /Customer/{id} |
-| DELETE | /Customer/{id} |
+| GET    | /customers      |
+| GET    | /customers/{id} |
+| POST   | /customers      |
+| PUT    | /customers/{id} |
+| DELETE | /customers/{id} |
 
 ---
 
@@ -189,9 +185,9 @@ http://localhost:8080/h2-console
 
 | Método | Endpoint       |
 | ------ | -------------- |
-| GET    | /Employee      |
-| GET    | /Employee/{id} |
-| POST   | /Employee      |
+| GET    | /employees      |
+| GET    | /employees/{id} |
+| POST   | /employees      |
 
 ---
 
@@ -199,9 +195,9 @@ http://localhost:8080/h2-console
 
 | Método | Endpoint    |
 | ------ | ----------- |
-| GET    | /Sales      |
-| GET    | /Sales/{id} |
-| POST   | /Sales      |
+| GET    | /sales      |
+| GET    | /sales/{id} |
+| POST   | /sales      |
 
 ---
 

@@ -21,8 +21,11 @@ import com.livrotech.entity.Sale;
 import com.livrotech.service.SaleService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
+@Validated
 @RequestMapping("/sales")
 public class SaleController {
 
@@ -38,7 +41,7 @@ public class SaleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SaleResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<SaleResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Sale> sale = saleService.findById(id);
 
         if (sale.isPresent()) {

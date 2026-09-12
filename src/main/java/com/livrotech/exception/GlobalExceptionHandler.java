@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import jakarta.validation.ConstraintViolationException;
 
 import com.livrotech.dto.ApiExceptionDTO;
 import com.livrotech.entity.ApiException;
@@ -14,14 +15,14 @@ import com.livrotech.entity.ApiException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	
-	@ExceptionHandler({MethodArgumentTypeMismatchException.class})
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ApiExceptionDTO> argumentException(
 	        Exception ex) {
 
 	    ApiExceptionDTO response = new ApiExceptionDTO(
 	            400,
-	            "Id do cliente precisa ser do tipo Inteiro",
-	            "ID"
+	            "Parâmetro inválido",
+	            "PARAMETER"
 	    );
 
 	    return ResponseEntity
@@ -29,19 +30,44 @@ public class GlobalExceptionHandler {
 	            .body(response);
 	}
 	
-	@ExceptionHandler({DataIntegrityViolationException.class, NullPointerException.class, MethodArgumentNotValidException.class})
-	public ResponseEntity<ApiExceptionDTO> handleDataIntegrity(
-	        Exception ex) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiExceptionDTO> handleValidation(MethodArgumentNotValidException ex) {
+	    var error = ex.getBindingResult().getFieldErrors().stream().findFirst();
+	    String field = error.map(fieldError -> fieldError.getField()).orElse("BODY");
+	    String message = error.map(fieldError -> fieldError.getDefaultMessage())
+	            .orElse("Dados inválidos");
 
 	    ApiExceptionDTO response = new ApiExceptionDTO(
 	            400,
-	            "Campos obrigatórios não foram preenchidos",
-	            "BODY"
+	            message,
+	            field
 	    );
 
 	    return ResponseEntity
 	            .badRequest()
 	            .body(response);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ApiExceptionDTO> handleConstraintViolation(ConstraintViolationException ex) {
+	    ApiExceptionDTO response = new ApiExceptionDTO(
+	            400,
+	            "Parâmetro inválido",
+	            "PARAMETER"
+	    );
+
+	    return ResponseEntity.badRequest().body(response);
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ApiExceptionDTO> handleDataIntegrity(DataIntegrityViolationException ex) {
+	    ApiExceptionDTO response = new ApiExceptionDTO(
+	            409,
+	            "A operação viola uma regra de integridade dos dados",
+	            "DATA"
+	    );
+
+	    return ResponseEntity.status(409).body(response);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
@@ -50,7 +76,7 @@ public class GlobalExceptionHandler {
 
 	    ApiExceptionDTO response = new ApiExceptionDTO(
 	            400,
-	            "Body da requisição é obrigatório",
+	            "Body da requisição está ausente ou inválido",
 	            "BODY"
 	    );
 

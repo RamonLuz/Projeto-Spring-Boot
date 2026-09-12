@@ -45,7 +45,7 @@ public class BookService {
                         && existingBook.getAuthor().equalsIgnoreCase(book.getAuthor()));
 
         if (alreadyExists) {
-            throw new ApiException(400, "Book already exists for this title and author", "Body");
+            throw new ApiException(409, "Book already exists for this title and author", "title");
         }
 
         return bookRepository.save(book);

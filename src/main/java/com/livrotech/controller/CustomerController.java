@@ -21,8 +21,11 @@ import com.livrotech.entity.Customer;
 import com.livrotech.service.CustomerService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
+@Validated
 @RequestMapping("/customers")
 public class CustomerController {
 
@@ -36,15 +39,11 @@ public class CustomerController {
     public ResponseEntity<List<CustomerResponseDTO>> getAll() {
         List<Customer> customers = customerService.listAll();
 
-        if (customers.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(customers.stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<CustomerResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isPresent()) {
@@ -66,7 +65,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CustomerRequestDTO dto) {
+    public ResponseEntity<CustomerResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody CustomerRequestDTO dto) {
         Customer customer = new Customer();
         customer.setStatus(dto.getStatus());
 
@@ -90,7 +89,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = customerService.delete(id);
 
         if (removed) {

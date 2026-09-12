@@ -20,8 +20,11 @@ import com.livrotech.entity.Employee;
 import com.livrotech.service.EmployeeService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 @RestController
+@Validated
 @RequestMapping("/employees")
 public class EmployeeController {
 
@@ -37,7 +40,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<EmployeeResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Employee> employee = employeeService.findById(id);
 
         if (employee.isPresent()) {
@@ -61,7 +64,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> update(@PathVariable Long id, @Valid @RequestBody EmployeeRequestDTO dto) {
+    public ResponseEntity<EmployeeResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody EmployeeRequestDTO dto) {
         Employee employee = new Employee();
         employee.setStatus(dto.getStatus());
 
@@ -80,7 +83,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = employeeService.delete(id);
 
         if (removed) {

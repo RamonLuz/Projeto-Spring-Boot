@@ -37,7 +37,7 @@ public class CustomerService {
 
         Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
         if (existingCustomer.isPresent()) {
-            throw new ApiException(400, "CPF already registered", "CPF");
+            throw new ApiException(409, "CPF already registered", "cpf");
         }
 
         return customerRepository.save(customer);
