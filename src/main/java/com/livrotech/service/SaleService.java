@@ -1,10 +1,12 @@
 package com.livrotech.service;
 
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.livrotech.entity.ApiException;
 import com.livrotech.entity.Book;
@@ -43,9 +45,16 @@ public class SaleService {
         return saleRepository.findById(id);
     }
 
+    @Transactional
     public Sale save(Sale sale) {
         if (sale == null) {
             throw new ApiException(400, "Sale is invalid", "Body");
+        }
+
+        if (sale.getSaleDate() == null) {
+            sale.setSaleDate(LocalDate.now());
+        } else if (sale.getSaleDate().isAfter(LocalDate.now())) {
+            throw new ApiException(400, "Sale date cannot be in the future", "SaleDate");
         }
 
         if (sale.getCustomer() == null || (sale.getCustomer().getId() == null

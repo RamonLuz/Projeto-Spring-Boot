@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "books")
+@Table(name = "books", uniqueConstraints = {
+        @jakarta.persistence.UniqueConstraint(name = "uk_book_title_author", columnNames = {"title", "author"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,13 +26,13 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String author;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
     public Book(Long id, String title, String author, BigDecimal price) {

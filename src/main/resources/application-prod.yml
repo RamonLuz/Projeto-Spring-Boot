@@ -13,10 +13,16 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
 
 server:
   port: ${PORT:8080}
 
 logging:
   level:
-    org.hibernate.SQL: INFO
+    # Do not print SQL statements in production
+    org.hibernate.SQL: WARN
+    # Avoid logging bind parameter values (sensitive)
+    org.hibernate.type.descriptor.sql: WARN

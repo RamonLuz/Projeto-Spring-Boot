@@ -27,7 +27,7 @@ public class CustomerService {
             throw new ApiException(400, "Name is required", "Name");
         }
 
-        if (customer.getCpf() == null || customer.getCpf().isBlank() || customer.getCpf().length() != 11) {
+        if (customer.getCpf() == null || !customer.getCpf().matches("\\d{11}")) {
             throw new ApiException(400, "CPF must have 11 digits", "CPF");
         }
 

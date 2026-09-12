@@ -2,6 +2,7 @@ package com.livrotech.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import com.livrotech.entity.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class CustomerRequestDTO {
     private String name;
 
     @NotBlank(message = "CPF is required")
+    @Pattern(regexp = "\\d{11}", message = "CPF must have 11 digits")
     private String cpf;
 
     @NotNull(message = "Status is required")

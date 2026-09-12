@@ -24,13 +24,13 @@ public class Sale {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Employee employee;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Book book;
 
     @Column(nullable = false)

@@ -18,10 +18,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Employee extends Person {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Integer registrationNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 80)
     private String position;
 
     @Column(nullable = false)

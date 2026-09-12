@@ -27,7 +27,7 @@ public class EmployeeService {
             throw new ApiException(400, "Name is required", "Name");
         }
 
-        if (employee.getCpf() == null || employee.getCpf().isBlank() || employee.getCpf().length() != 11) {
+        if (employee.getCpf() == null || !employee.getCpf().matches("\\d{11}")) {
             throw new ApiException(400, "CPF must have 11 digits", "CPF");
         }
 
@@ -37,6 +37,14 @@ public class EmployeeService {
 
         if (employee.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
+        }
+
+        if (employeeRepository.findByCpf(employee.getCpf()).isPresent()) {
+            throw new ApiException(400, "CPF already registered", "CPF");
+        }
+
+        if (employeeRepository.findByRegistrationNumber(employee.getRegistrationNumber()).isPresent()) {
+            throw new ApiException(400, "Registration number already registered", "RegistrationNumber");
         }
 
         return employeeRepository.save(employee);

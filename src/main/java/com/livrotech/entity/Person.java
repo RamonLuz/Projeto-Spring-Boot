@@ -21,10 +21,10 @@ public abstract class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     protected String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 11)
     protected String cpf;
 
     public Person(String name, String cpf) {
