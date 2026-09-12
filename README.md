@@ -61,6 +61,8 @@ src
 * Cadastrar funcionário
 * Listar funcionários
 * Buscar funcionário por ID
+* Atualizar status do funcionário
+* Remover funcionário
 
 ### Vendas
 
@@ -209,10 +211,10 @@ Clone o repositório:
 git clone https://github.com/RamonLuz/Projeto-Spring-Boot.git
 ```
 
-Entre na pasta:
+Entre na pasta do projeto:
 
 ```bash
-cd livrotech
+cd Projeto-Spring-Boot
 ```
 
 Execute:
