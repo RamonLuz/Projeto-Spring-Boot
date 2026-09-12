@@ -3,6 +3,8 @@ package com.livrotech.entity;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,12 +20,13 @@ import lombok.Setter;
 public class Customer extends Person {
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToMany
     private List<Book> purchases;
 
-    public Customer(String name, String cpf, String status, List<Book> purchases) {
+    public Customer(String name, String cpf, Status status, List<Book> purchases) {
         super(name, cpf);
         this.status = status;
         this.purchases = purchases;

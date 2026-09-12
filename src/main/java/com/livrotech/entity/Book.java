@@ -1,6 +1,7 @@
 package com.livrotech.entity;
 
 import java.util.Objects;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,9 +31,9 @@ public class Book {
     private String author;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
-    public Book(Long id, String title, String author, Double price) {
+    public Book(Long id, String title, String author, BigDecimal price) {
         this.id = id;
         this.title = title;
         this.author = author;

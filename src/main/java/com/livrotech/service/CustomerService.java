@@ -31,7 +31,7 @@ public class CustomerService {
             throw new ApiException(400, "CPF must have 11 digits", "CPF");
         }
 
-        if (customer.getStatus() == null || customer.getStatus().isBlank()) {
+        if (customer.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
 
@@ -70,7 +70,7 @@ public class CustomerService {
             throw new ApiException(400, "Customer is invalid", "Body");
         }
 
-        if (updatedCustomer.getStatus() == null || updatedCustomer.getStatus().isBlank()) {
+        if (updatedCustomer.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
 

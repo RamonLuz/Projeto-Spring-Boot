@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import com.livrotech.entity.Status;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record EmployeeResponseDTO(
@@ -12,6 +13,6 @@ public record EmployeeResponseDTO(
         @NotBlank String cpf,
         @NotNull @Positive Integer registrationNumber,
         @NotBlank String position,
-        @NotBlank String status
+        @NotNull Status status
 ) {
 }

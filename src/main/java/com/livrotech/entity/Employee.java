@@ -3,6 +3,8 @@ package com.livrotech.entity;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -17,15 +19,16 @@ import lombok.Setter;
 public class Employee extends Person {
 
     @Column(nullable = false)
-    private int registrationNumber;
+    private Integer registrationNumber;
 
     @Column(nullable = false)
     private String position;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
-    public Employee(String name, String cpf, int registrationNumber, String position, String status) {
+    public Employee(String name, String cpf, Integer registrationNumber, String position, Status status) {
         super(name, cpf);
         this.registrationNumber = registrationNumber;
         this.position = position;
@@ -52,6 +55,6 @@ public class Employee extends Person {
             return false;
         }
         Employee other = (Employee) obj;
-        return registrationNumber == other.registrationNumber;
+        return Objects.equals(registrationNumber, other.registrationNumber);
     }
 }

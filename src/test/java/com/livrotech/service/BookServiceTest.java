@@ -29,7 +29,7 @@ class BookServiceTest {
                 1L,
                 "Clean Code",
                 "Robert Martin",
-                100.0
+                java.math.BigDecimal.valueOf(100.0)
         );
 
         when(bookRepository.findAll())

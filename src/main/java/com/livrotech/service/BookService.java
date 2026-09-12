@@ -35,7 +35,7 @@ public class BookService {
             throw new ApiException(400, "Author is required", "Body");
         }
 
-        if (book.getPrice() == null || book.getPrice() <= 0) {
+        if (book.getPrice() == null || book.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new ApiException(400, "Price is invalid", "Body");
         }
 
@@ -75,7 +75,7 @@ public class BookService {
             throw new ApiException(400, "Author is required", "Body");
         }
 
-        if (updatedBook.getPrice() == null || updatedBook.getPrice() <= 0) {
+        if (updatedBook.getPrice() == null || updatedBook.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new ApiException(400, "Price is invalid", "Body");
         }
 

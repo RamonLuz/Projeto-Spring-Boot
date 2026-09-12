@@ -35,7 +35,7 @@ public class EmployeeService {
             throw new ApiException(400, "Position is required", "Position");
         }
 
-        if (employee.getStatus() == null || employee.getStatus().isBlank()) {
+        if (employee.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
 
@@ -62,7 +62,7 @@ public class EmployeeService {
             throw new ApiException(400, "Employee is invalid", "Body");
         }
 
-        if (updatedEmployee.getStatus() == null || updatedEmployee.getStatus().isBlank()) {
+        if (updatedEmployee.getStatus() == null) {
             throw new ApiException(400, "Status is required", "Status");
         }
 
