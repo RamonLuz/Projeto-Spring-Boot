@@ -39,6 +39,10 @@ public class EmployeeService {
             throw new ApiException(400, "Status is required", "Status");
         }
 
+        employee.setName(employee.getName().trim());
+        employee.setCpf(employee.getCpf().trim());
+        employee.setPosition(employee.getPosition().trim());
+
         if (employeeRepository.findByCpf(employee.getCpf()).isPresent()) {
             throw new ApiException(409, "CPF already registered", "cpf");
         }

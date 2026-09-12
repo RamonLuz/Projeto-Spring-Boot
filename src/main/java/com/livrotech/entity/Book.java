@@ -35,6 +35,9 @@ public class Book {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
+    @jakarta.persistence.Version
+    private Long version;
+
     public Book(Long id, String title, String author, BigDecimal price) {
         this.id = id;
         this.title = title;

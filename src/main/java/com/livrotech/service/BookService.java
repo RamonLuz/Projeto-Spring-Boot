@@ -39,12 +39,10 @@ public class BookService {
             throw new ApiException(400, "Price is invalid", "Body");
         }
 
-        List<Book> books = bookRepository.findAll();
-        boolean alreadyExists = books.stream()
-                .anyMatch(existingBook -> existingBook.getTitle().equalsIgnoreCase(book.getTitle())
-                        && existingBook.getAuthor().equalsIgnoreCase(book.getAuthor()));
+        book.setTitle(book.getTitle().trim());
+        book.setAuthor(book.getAuthor().trim());
 
-        if (alreadyExists) {
+        if (bookRepository.findByTitleIgnoreCaseAndAuthorIgnoreCase(book.getTitle(), book.getAuthor()).isPresent()) {
             throw new ApiException(409, "Book already exists for this title and author", "title");
         }
 
@@ -79,10 +77,20 @@ public class BookService {
             throw new ApiException(400, "Price is invalid", "Body");
         }
 
+        updatedBook.setTitle(updatedBook.getTitle().trim());
+        updatedBook.setAuthor(updatedBook.getAuthor().trim());
+
         Optional<Book> existingBook = bookRepository.findById(id);
 
         if (existingBook.isPresent()) {
             Book book = existingBook.get();
+
+            Optional<Book> duplicateBook = bookRepository
+                    .findByTitleIgnoreCaseAndAuthorIgnoreCase(updatedBook.getTitle(), updatedBook.getAuthor());
+            if (duplicateBook.isPresent() && !duplicateBook.get().getId().equals(id)) {
+                throw new ApiException(409, "Book already exists for this title and author", "title");
+            }
+
             book.setTitle(updatedBook.getTitle());
             book.setAuthor(updatedBook.getAuthor());
             book.setPrice(updatedBook.getPrice());

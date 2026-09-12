@@ -25,12 +25,15 @@ public class Sale {
     private Long id;
 
     @ManyToOne(optional = false)
+    @jakarta.persistence.JoinColumn(nullable = false)
     private Customer customer;
 
     @ManyToOne(optional = false)
+    @jakarta.persistence.JoinColumn(nullable = false)
     private Employee employee;
 
     @ManyToOne(optional = false)
+    @jakarta.persistence.JoinColumn(nullable = false)
     private Book book;
 
     @Column(nullable = false)

@@ -27,6 +27,9 @@ public abstract class Person {
     @Column(nullable = false, unique = true, length = 11)
     protected String cpf;
 
+    @jakarta.persistence.Version
+    private Long version;
+
     public Person(String name, String cpf) {
         this.name = name;
         this.cpf = cpf;
