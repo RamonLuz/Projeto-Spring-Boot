@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.BookRequestDTO;
 import com.livrotech.dto.BookResponseDTO;
+import java.math.BigDecimal;
 import com.livrotech.entity.Book;
 import com.livrotech.service.BookService;
 
@@ -75,7 +76,8 @@ public class BookController {
     }
 
     private BookResponseDTO toResponse(Book book) {
-        return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice());
+        BigDecimal price = book.getPrice() == null ? null : BigDecimal.valueOf(book.getPrice());
+        return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), price);
     }
 
     @DeleteMapping("/{id}")

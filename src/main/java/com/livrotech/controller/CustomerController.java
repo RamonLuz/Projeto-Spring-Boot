@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.livrotech.dto.CustomerRequestDTO;
 import com.livrotech.dto.BookResponseDTO;
 import com.livrotech.dto.CustomerResponseDTO;
+import java.math.BigDecimal;
 import com.livrotech.entity.Customer;
 import com.livrotech.service.CustomerService;
 
@@ -83,7 +84,10 @@ public class CustomerController {
         List<BookResponseDTO> purchases = customer.getPurchases() == null
                 ? List.of()
                 : customer.getPurchases().stream()
-                        .map(book -> new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice()))
+                        .map(book -> {
+                            BigDecimal price = book.getPrice() == null ? null : BigDecimal.valueOf(book.getPrice());
+                            return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), price);
+                        })
                         .toList();
 
         return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getCpf(), customer.getStatus(), purchases);
