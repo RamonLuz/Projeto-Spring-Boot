@@ -3,6 +3,9 @@ package com.livrotech.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,10 +40,9 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerResponseDTO>> getAll() {
-        List<Customer> customers = customerService.listAll();
-
-        return ResponseEntity.ok(customers.stream().map(CustomerMapper::toResponse).toList());
+    public ResponseEntity<Page<CustomerResponseDTO>> getAll(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(customerService.listPage(pageable).map(CustomerMapper::toResponse));
     }
 
     @GetMapping("/{id}")

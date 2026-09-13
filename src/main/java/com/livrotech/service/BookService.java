@@ -3,6 +3,8 @@ package com.livrotech.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,10 @@ public class BookService {
 
     public List<Book> listAll() {
         return bookRepository.findAll();
+    }
+
+    public Page<Book> listPage(Pageable pageable) {
+        return bookRepository.findAll(pageable);
     }
 
     public Book save(Book book) {

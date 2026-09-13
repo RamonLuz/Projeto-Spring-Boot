@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,10 @@ public class SaleService {
 
     public List<Sale> listAll() {
         return saleRepository.findAll();
+    }
+
+    public Page<Sale> listPage(Pageable pageable) {
+        return saleRepository.findAll(pageable);
     }
 
     public Optional<Sale> findById(Long id) {
