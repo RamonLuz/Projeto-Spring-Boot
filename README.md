@@ -199,6 +199,15 @@ Para deixar a API mais próxima de um ambiente de produção, também foram refo
 - token JWT com emissor, role e expiração configuráveis
 - suporte a HTTPS por configuração `app.security.require-https`
 
+### Persistência e auditoria
+
+A camada de dados também foi reforçada com:
+
+- campos de auditoria (`created_at`, `updated_at`) em entidades persistentes
+- lifecycle hooks via `@PrePersist` e `@PreUpdate`
+- índices para consultas frequentes em clientes, funcionários, vendas e usuários
+- migração Flyway versionada para manter o esquema consistente em cada ambiente
+
 ### Variáveis de ambiente principais
 
 ```bash

@@ -20,7 +20,7 @@ import jakarta.validation.constraints.PastOrPresent;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Sale {
+public class Sale extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

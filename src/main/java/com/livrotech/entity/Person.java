@@ -19,7 +19,7 @@ import com.livrotech.validation.ValidCpf;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class Person {
+public abstract class Person extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
