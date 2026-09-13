@@ -68,10 +68,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiExceptionDTO> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String databaseMessage = ex.getMostSpecificCause().getMessage();
+        String message = "A operação viola uma regra de integridade dos dados";
+        String field = "data";
+
+        if (databaseMessage != null) {
+            String normalizedMessage = databaseMessage.toUpperCase();
+            if (normalizedMessage.contains("FK_SALES_BOOK")) {
+                message = "Não é possível remover um livro que possui vendas";
+                field = "bookId";
+            } else if (normalizedMessage.contains("FK_SALES_CUSTOMER")) {
+                message = "Não é possível remover um cliente que possui vendas";
+                field = "customerId";
+            } else if (normalizedMessage.contains("FK_SALES_EMPLOYEE")) {
+                message = "Não é possível remover um funcionário que possui vendas";
+                field = "employeeId";
+            }
+        }
+
         ApiExceptionDTO response = new ApiExceptionDTO(
                 409,
-                "A operação viola uma regra de integridade dos dados",
-                "data"
+                message,
+                field
         );
 
         return ResponseEntity.status(409).body(response);

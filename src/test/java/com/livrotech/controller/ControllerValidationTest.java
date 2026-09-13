@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -157,6 +158,20 @@ class ControllerValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("body"))
                 .andExpect(jsonPath("$.message").value("Body da requisição é obrigatório"));
+    }
+
+    @Test
+    void shouldExplainRelatedBookDeletionFailure() throws Exception {
+        when(bookService.delete(1L)).thenThrow(new DataIntegrityViolationException(
+                "integrity error",
+                new RuntimeException("FK_SALES_BOOK")
+        ));
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/books/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.field").value("bookId"))
+                .andExpect(jsonPath("$.message")
+                        .value("Não é possível remover um livro que possui vendas"));
     }
 
     @Test
