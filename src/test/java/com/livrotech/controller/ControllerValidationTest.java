@@ -64,12 +64,12 @@ class ControllerValidationTest {
                 .content("""
                         {
                           "title": "",
-                          "author": "Author",
-                          "price": 10.00
+                          "author": "",
+                          "price": null
                         }
                         """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.field").value("title"));
+                .andExpect(jsonPath("$.errors.length()").value(3));
     }
 
     @Test

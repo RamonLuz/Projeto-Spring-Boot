@@ -11,6 +11,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import jakarta.validation.ConstraintViolationException;
 
 import com.livrotech.dto.ApiExceptionDTO;
+import com.livrotech.dto.ApiValidationErrorDTO;
 import com.livrotech.entity.ApiException;
 
 @ControllerAdvice
@@ -31,19 +32,35 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiExceptionDTO> handleValidation(MethodArgumentNotValidException ex) {
-        var error = ex.getBindingResult().getFieldErrors().stream().findFirst();
-        String field = error.map(fieldError -> fieldError.getField()).orElse("body");
-        String message = error.map(fieldError -> fieldError.getDefaultMessage())
-                .orElse("Dados inválidos");
+        var errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> new ApiValidationErrorDTO(error.getField(), error.getDefaultMessage()))
+                .toList();
+        ApiValidationErrorDTO firstError = errors.stream().findFirst()
+                .orElse(new ApiValidationErrorDTO("body", "Dados inválidos"));
 
-        ApiExceptionDTO response = new ApiExceptionDTO(400, message, field);
+        ApiExceptionDTO response = new ApiExceptionDTO(
+                400,
+                firstError.message(),
+                firstError.field(),
+                errors
+        );
 
         return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiExceptionDTO> handleConstraintViolation(ConstraintViolationException ex) {
-        ApiExceptionDTO response = new ApiExceptionDTO(400, "Parâmetro inválido", "parameter");
+        var errors = ex.getConstraintViolations().stream()
+                .map(error -> new ApiValidationErrorDTO(error.getPropertyPath().toString(), error.getMessage()))
+                .toList();
+        ApiValidationErrorDTO firstError = errors.stream().findFirst()
+                .orElse(new ApiValidationErrorDTO("parameter", "Parâmetro inválido"));
+        ApiExceptionDTO response = new ApiExceptionDTO(
+                400,
+                firstError.message(),
+                firstError.field(),
+                errors
+        );
 
         return ResponseEntity.badRequest().body(response);
     }
