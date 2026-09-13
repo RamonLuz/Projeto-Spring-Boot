@@ -39,14 +39,17 @@ public class SaleService {
         this.customerRepository = customerRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Sale> listAll() {
         return saleRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Page<Sale> listPage(Pageable pageable) {
         return saleRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<Sale> listPage(Pageable pageable, LocalDate saleDate) {
         if (saleDate == null) {
             return listPage(pageable);
@@ -54,6 +57,7 @@ public class SaleService {
         return saleRepository.findBySaleDate(saleDate, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Sale> findById(Long id) {
         if (id == null) {
             return Optional.empty();

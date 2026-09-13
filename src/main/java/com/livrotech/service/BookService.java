@@ -24,14 +24,17 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Book> listAll() {
         return bookRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Page<Book> listPage(Pageable pageable) {
         return bookRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<Book> listPage(Pageable pageable, String title) {
         if (title == null || title.isBlank()) {
             return listPage(pageable);
@@ -72,6 +75,7 @@ public class BookService {
         return savedBook;
     }
 
+    @Transactional(readOnly = true)
     public Optional<Book> findById(Long id) {
         if (id == null) {
             return Optional.empty();

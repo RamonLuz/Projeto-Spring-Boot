@@ -68,14 +68,17 @@ public class EmployeeService {
         return savedEmployee;
     }
 
+    @Transactional(readOnly = true)
     public List<Employee> listAll() {
         return employeeRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Page<Employee> listPage(Pageable pageable) {
         return employeeRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<Employee> listPage(Pageable pageable, String name) {
         if (name == null || name.isBlank()) {
             return listPage(pageable);
@@ -83,6 +86,7 @@ public class EmployeeService {
         return employeeRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Employee> findById(Long id) {
         if (id == null) {
             return Optional.empty();

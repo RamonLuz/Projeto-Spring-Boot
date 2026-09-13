@@ -61,14 +61,17 @@ public class CustomerService {
         return savedCustomer;
     }
 
+    @Transactional(readOnly = true)
     public List<Customer> listAll() {
         return customerRepository.findAll().stream().map(this::loadPurchases).toList();
     }
 
+    @Transactional(readOnly = true)
     public Page<Customer> listPage(Pageable pageable) {
         return customerRepository.findAll(pageable).map(this::loadPurchases);
     }
 
+    @Transactional(readOnly = true)
     public Page<Customer> listPage(Pageable pageable, String name) {
         if (name == null || name.isBlank()) {
             return listPage(pageable);
@@ -76,6 +79,7 @@ public class CustomerService {
         return customerRepository.findByNameContainingIgnoreCase(name.trim(), pageable).map(this::loadPurchases);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Customer> findById(Long id) {
         if (id == null) {
             return Optional.empty();
@@ -83,6 +87,7 @@ public class CustomerService {
         return customerRepository.findById(id).map(this::loadPurchases);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Customer> findByCpf(String cpf) {
         if (cpf == null || cpf.isBlank()) {
             return Optional.empty();
