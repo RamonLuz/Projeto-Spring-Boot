@@ -1,5 +1,7 @@
 package com.livrotech.exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -77,10 +79,41 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiExceptionDTO> handleBodyMissing(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiExceptionDTO> handleUnreadableBody(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof JsonParseException) {
+            return ResponseEntity.badRequest().body(new ApiExceptionDTO(
+                    400,
+                    "JSON malformado",
+                    "body"
+            ));
+        }
+
+        if (cause instanceof InvalidFormatException invalidFormatException) {
+            String field = invalidFormatException.getPath().stream()
+                    .reduce((first, second) -> second)
+                    .map(reference -> reference.getFieldName())
+                    .orElse("body");
+
+            return ResponseEntity.badRequest().body(new ApiExceptionDTO(
+                    400,
+                    "Valor inválido para o campo '" + field + "'",
+                    field
+            ));
+        }
+
+        if (ex.getMessage() != null && ex.getMessage().contains("Required request body")) {
+            return ResponseEntity.badRequest().body(new ApiExceptionDTO(
+                    400,
+                    "Body da requisição é obrigatório",
+                    "body"
+            ));
+        }
+
         ApiExceptionDTO response = new ApiExceptionDTO(
                 400,
-                "Body da requisição está ausente ou inválido",
+                "Body da requisição contém dados inválidos",
                 "body"
         );
 

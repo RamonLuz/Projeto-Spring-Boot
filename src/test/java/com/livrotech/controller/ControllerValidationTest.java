@@ -107,6 +107,39 @@ class ControllerValidationTest {
     }
 
     @Test
+    void shouldDifferentiateMalformedJson() throws Exception {
+        mockMvc.perform(post("/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("body"))
+                .andExpect(jsonPath("$.message").value("JSON malformado"));
+    }
+
+    @Test
+    void shouldIdentifyInvalidEnumValue() throws Exception {
+        mockMvc.perform(put("/customers/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "status": "UNKNOWN"
+                        }
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("status"))
+                .andExpect(jsonPath("$.message").value("Valor inválido para o campo 'status'"));
+    }
+
+    @Test
+    void shouldIdentifyMissingBody() throws Exception {
+        mockMvc.perform(put("/employees/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("body"))
+                .andExpect(jsonPath("$.message").value("Body da requisição é obrigatório"));
+    }
+
+    @Test
     void shouldCreateSale() throws Exception {
         Customer customer = new Customer("Ana", "12345678901", Status.ACTIVE, new ArrayList<>());
         customer.setId(1L);
