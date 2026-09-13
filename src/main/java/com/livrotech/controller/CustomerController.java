@@ -67,12 +67,7 @@ public class CustomerController {
     @PostMapping
     @Operation(summary = "Cadastra cliente")
     public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO dto) {
-        Customer customer = new Customer();
-        customer.setName(dto.getName());
-        customer.setCpf(dto.getCpf());
-        customer.setStatus(dto.getStatus());
-
-        Customer savedCustomer = customerService.save(customer);
+        Customer savedCustomer = customerService.save(CustomerMapper.toEntity(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(CustomerMapper.toResponse(savedCustomer));
     }
 
@@ -80,10 +75,7 @@ public class CustomerController {
     @Operation(summary = "Atualiza status do cliente")
     public ResponseEntity<CustomerResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody CustomerStatusUpdateRequestDTO dto) {
-        Customer customer = new Customer();
-        customer.setStatus(dto.status());
-
-        Optional<Customer> updatedCustomer = customerService.update(id, customer);
+        Optional<Customer> updatedCustomer = customerService.update(id, CustomerMapper.toStatusEntity(dto));
 
         if (updatedCustomer.isPresent()) {
             return ResponseEntity.ok(CustomerMapper.toResponse(updatedCustomer.get()));

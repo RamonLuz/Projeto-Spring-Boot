@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.livrotech.dto.BookResponseDTO;
 import com.livrotech.dto.CustomerResponseDTO;
+import com.livrotech.dto.CustomerRequestDTO;
+import com.livrotech.dto.CustomerStatusUpdateRequestDTO;
 import com.livrotech.entity.Customer;
 
 public final class CustomerMapper {
@@ -25,5 +27,15 @@ public final class CustomerMapper {
                 customer.getStatus(),
                 purchases
         );
+    }
+
+    public static Customer toEntity(CustomerRequestDTO dto) {
+        return new Customer(dto.getName(), dto.getCpf(), dto.getStatus(), new java.util.ArrayList<>());
+    }
+
+    public static Customer toStatusEntity(CustomerStatusUpdateRequestDTO dto) {
+        Customer customer = new Customer();
+        customer.setStatus(dto.status());
+        return customer;
     }
 }

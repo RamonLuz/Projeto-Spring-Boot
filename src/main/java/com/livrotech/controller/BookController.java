@@ -52,12 +52,7 @@ public class BookController {
     @PostMapping
     @Operation(summary = "Cadastra livro")
     public ResponseEntity<BookResponseDTO> create(@Valid @RequestBody BookRequestDTO dto) {
-        Book book = new Book();
-        book.setTitle(dto.getTitle());
-        book.setAuthor(dto.getAuthor());
-        book.setPrice(dto.getPrice());
-
-        Book savedBook = bookService.save(book);
+        Book savedBook = bookService.save(BookMapper.toEntity(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(BookMapper.toResponse(savedBook));
     }
 
@@ -76,12 +71,7 @@ public class BookController {
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza livro")
     public ResponseEntity<BookResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody BookRequestDTO dto) {
-        Book book = new Book();
-        book.setTitle(dto.getTitle());
-        book.setAuthor(dto.getAuthor());
-        book.setPrice(dto.getPrice());
-
-        Optional<Book> updatedBook = bookService.update(id, book);
+        Optional<Book> updatedBook = bookService.update(id, BookMapper.toEntity(dto));
 
         if (updatedBook.isPresent()) {
             return ResponseEntity.ok(BookMapper.toResponse(updatedBook.get()));

@@ -66,14 +66,7 @@ public class EmployeeController {
     @PostMapping
     @Operation(summary = "Cadastra funcionario")
     public ResponseEntity<EmployeeResponseDTO> create(@Valid @RequestBody EmployeeRequestDTO dto) {
-        Employee employee = new Employee();
-        employee.setName(dto.getName());
-        employee.setCpf(dto.getCpf());
-        employee.setRegistrationNumber(dto.getRegistrationNumber());
-        employee.setPosition(dto.getPosition());
-        employee.setStatus(dto.getStatus());
-
-        Employee savedEmployee = employeeService.save(employee);
+        Employee savedEmployee = employeeService.save(EmployeeMapper.toEntity(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(EmployeeMapper.toResponse(savedEmployee));
     }
 
@@ -81,10 +74,7 @@ public class EmployeeController {
     @Operation(summary = "Atualiza status do funcionario")
     public ResponseEntity<EmployeeResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody EmployeeStatusUpdateRequestDTO dto) {
-        Employee employee = new Employee();
-        employee.setStatus(dto.status());
-
-        Optional<Employee> updatedEmployee = employeeService.update(id, employee);
+        Optional<Employee> updatedEmployee = employeeService.update(id, EmployeeMapper.toStatusEntity(dto));
 
         if (updatedEmployee.isPresent()) {
             return ResponseEntity.ok(EmployeeMapper.toResponse(updatedEmployee.get()));
