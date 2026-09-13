@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "customers")
@@ -22,6 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Customer extends Person {
 
+    @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -10,6 +10,10 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "employees")
@@ -18,12 +22,17 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Employee extends Person {
 
+    @NotNull
+    @Positive
     @Column(nullable = false, unique = true)
     private Integer registrationNumber;
 
+    @NotBlank
+    @Size(max = 80)
     @Column(nullable = false, length = 80)
     private String position;
 
+    @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -10,6 +10,10 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import com.livrotech.validation.ValidCpf;
 
 @MappedSuperclass
 @Getter
@@ -21,9 +25,14 @@ public abstract class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
+    @NotBlank
+    @Size(max = 100)
     @Column(nullable = false, length = 100)
     protected String name;
 
+    @NotBlank
+    @Pattern(regexp = "\\d{11}")
+    @ValidCpf
     @Column(nullable = false, unique = true, length = 11)
     protected String cpf;
 

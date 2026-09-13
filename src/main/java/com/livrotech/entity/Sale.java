@@ -12,6 +12,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
 @Entity
 @Table(name = "sales")
@@ -36,7 +38,9 @@ public class Sale {
     @jakarta.persistence.JoinColumn(nullable = false)
     private Book book;
 
+    @NotNull
     @Column(nullable = false)
+    @PastOrPresent
     private LocalDate saleDate = LocalDate.now();
 
     public Sale(Long id, Customer customer, Employee employee, Book book) {
