@@ -36,6 +36,7 @@ import com.livrotech.entity.Customer;
 import com.livrotech.entity.Employee;
 import com.livrotech.entity.Sale;
 import com.livrotech.entity.Status;
+import com.livrotech.config.WebConfig;
 import com.livrotech.service.BookService;
 import com.livrotech.service.CustomerService;
 import com.livrotech.service.EmployeeService;
@@ -49,6 +50,7 @@ import com.livrotech.service.SaleService;
 })
 @ActiveProfiles("test")
 @TestPropertySource(properties = "app.security.enabled=false")
+@org.springframework.context.annotation.Import(WebConfig.class)
 class ControllerValidationTest {
 
     @Autowired
@@ -249,6 +251,19 @@ class ControllerValidationTest {
                 .andExpect(jsonPath("$.size").value(1))
                 .andExpect(jsonPath("$.totalElements").value(3))
                 .andExpect(jsonPath("$.content[0].title").value("Java Basics"));
+    }
+
+    @Test
+    void shouldLimitMaximumPageSize() throws Exception {
+        when(bookService.listPage(any(Pageable.class), eq(null)))
+                .thenReturn(new PageImpl<>(List.of()));
+
+        mockMvc.perform(get("/books").param("size", "500"))
+                .andExpect(status().isOk());
+
+        org.mockito.Mockito.verify(bookService).listPage(
+                org.mockito.ArgumentMatchers.argThat(pageable -> pageable.getPageSize() == 100),
+                eq(null));
     }
 
     @Test
