@@ -41,6 +41,10 @@ public class SecurityConfig {
             http.authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers("/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/books", "/customers", "/employees", "/sales").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/books", "/customers", "/employees", "/sales").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/books/**", "/customers/**", "/employees/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/books/**", "/customers/**", "/employees/**", "/sales/**").hasRole("ADMIN")
                     .anyRequest().authenticated());
             http.authenticationProvider(authenticationProvider(userDetailsService))
                     .httpBasic(AbstractHttpConfigurer::disable)
@@ -73,10 +77,11 @@ public class SecurityConfig {
     @Bean
     InMemoryUserDetailsManager userDetailsManager(
             @Value("${APP_SECURITY_USERNAME:admin}") String username,
-            @Value("${APP_SECURITY_PASSWORD:admin123}") String password) {
+            @Value("${APP_SECURITY_PASSWORD:admin123}") String password,
+            @Value("${APP_SECURITY_ROLE:ADMIN}") String role) {
         UserDetails user = User.withUsername(username)
                 .password("{noop}" + password)
-                .roles("USER")
+                .roles(role.trim())
                 .build();
         return new InMemoryUserDetailsManager(user);
     }
