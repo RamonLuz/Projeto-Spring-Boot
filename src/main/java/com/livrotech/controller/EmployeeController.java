@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Lista funcionarios", description = "Lista funcionarios com paginacao e filtro opcional por nome e status.")
     public ResponseEntity<Page<EmployeeResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
@@ -59,6 +61,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Busca funcionario por ID")
     public ResponseEntity<EmployeeResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Employee> employee = employeeService.findById(id);
@@ -71,6 +74,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cadastra funcionario")
     public ResponseEntity<EmployeeResponseDTO> create(@Valid @RequestBody EmployeeRequestDTO dto) {
         Employee savedEmployee = employeeService.save(EmployeeMapper.toEntity(dto));
@@ -78,6 +82,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualiza status do funcionario")
     public ResponseEntity<EmployeeResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody EmployeeStatusUpdateRequestDTO dto) {
@@ -91,6 +96,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualiza parcialmente o status do funcionario")
     public ResponseEntity<EmployeeResponseDTO> patchStatus(@PathVariable @Positive Long id,
             @Valid @RequestBody EmployeeStatusUpdateRequestDTO dto) {
@@ -98,6 +104,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remove funcionario")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = employeeService.delete(id);

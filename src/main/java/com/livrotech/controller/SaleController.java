@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,7 @@ public class SaleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Lista vendas", description = "Lista vendas com paginacao e filtro opcional por data.")
     public ResponseEntity<Page<SaleResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
@@ -55,6 +57,7 @@ public class SaleController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Busca venda por ID")
     public ResponseEntity<SaleResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Sale> sale = saleService.findById(id);
@@ -67,6 +70,7 @@ public class SaleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Registra venda")
     public ResponseEntity<SaleResponseDTO> create(@Valid @RequestBody SaleRequestDTO dto) {
         Sale savedSale = saleService.save(SaleMapper.toEntity(dto));

@@ -178,6 +178,17 @@ O projeto passou por uma evolução gradual de segurança para ficar mais próxi
 - roles por perfil (`ADMIN`, `USER`)
 - autorização por método e por configuração HTTP
 
+### Autorização mais madura
+
+A autorização foi evoluída para combinar camadas:
+
+- regras de acesso por endpoint no `SecurityConfig`
+- validação por método com `@PreAuthorize` nos controllers
+- papéis explícitos (`ADMIN`, `USER`) em `AppUserRole`
+- segurança de método ativada somente quando `app.security.enabled=true`
+
+Isso mantém o ambiente local/teste seguro e previsível, sem quebrar o modo padrão do projeto.
+
 ### Variáveis de ambiente principais
 
 ```bash

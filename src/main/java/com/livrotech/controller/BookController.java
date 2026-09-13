@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ public class BookController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Lista livros", description = "Lista livros com paginacao e filtro opcional por titulo.")
     public ResponseEntity<Page<BookResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
@@ -52,6 +54,7 @@ public class BookController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cadastra livro")
     public ResponseEntity<BookResponseDTO> create(@Valid @RequestBody BookRequestDTO dto) {
         Book savedBook = bookService.save(BookMapper.toEntity(dto));
@@ -59,6 +62,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Busca livro por ID")
     public ResponseEntity<BookResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Book> book = bookService.findById(id);
@@ -71,6 +75,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualiza livro")
     public ResponseEntity<BookResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody BookRequestDTO dto) {
         Optional<Book> updatedBook = bookService.update(id, BookMapper.toEntity(dto));
@@ -83,6 +88,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remove livro")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = bookService.delete(id);

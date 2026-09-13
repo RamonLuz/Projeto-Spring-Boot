@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.livrotech.entity.AppUser;
+import com.livrotech.entity.AppUserRole;
 import com.livrotech.repository.AppUserRepository;
 
 @Service
@@ -40,7 +41,8 @@ public class AppUserService implements UserDetailsService {
 
     public void ensureDefaultUserExists() {
         if (appUserRepository.findByUsername(defaultUsername).isEmpty()) {
-            AppUser user = new AppUser(defaultUsername, passwordEncoder.encode(defaultPassword), defaultRole.trim());
+            AppUserRole role = AppUserRole.from(defaultRole);
+            AppUser user = new AppUser(defaultUsername, passwordEncoder.encode(defaultPassword), role);
             appUserRepository.save(user);
         }
     }

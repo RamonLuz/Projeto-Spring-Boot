@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,7 @@ public class CustomerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Lista clientes", description = "Lista clientes com paginacao e filtro opcional por nome e status.")
     public ResponseEntity<Page<CustomerResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
@@ -60,6 +62,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Busca cliente por ID")
     public ResponseEntity<CustomerResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Customer> customer = customerService.findById(id);
@@ -72,6 +75,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cadastra cliente")
     public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO dto) {
         Customer savedCustomer = customerService.save(CustomerMapper.toEntity(dto));
@@ -79,6 +83,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualiza status do cliente")
     public ResponseEntity<CustomerResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody CustomerStatusUpdateRequestDTO dto) {
@@ -92,6 +97,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualiza parcialmente o status do cliente")
     public ResponseEntity<CustomerResponseDTO> patchStatus(@PathVariable @Positive Long id,
             @Valid @RequestBody CustomerStatusUpdateRequestDTO dto) {
@@ -99,6 +105,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remove cliente")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = customerService.delete(id);
