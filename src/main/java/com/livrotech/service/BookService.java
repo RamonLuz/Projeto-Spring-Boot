@@ -24,7 +24,7 @@ public class BookService {
 
     public Book save(Book book) {
         if (book == null) {
-            throw new ApiException(400, "Book is invalid", "Body");
+            throw new ApiException(400, "Book is invalid", "body");
         }
 
         if (book.getTitle() != null) {
@@ -35,15 +35,15 @@ public class BookService {
         }
 
         if (book.getTitle() == null || book.getTitle().isBlank()) {
-            throw new ApiException(400, "Title is required", "Body");
+            throw new ApiException(400, "Title is required", "title");
         }
 
         if (book.getAuthor() == null || book.getAuthor().isBlank()) {
-            throw new ApiException(400, "Author is required", "Body");
+            throw new ApiException(400, "Author is required", "author");
         }
 
         if (book.getPrice() == null || book.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-            throw new ApiException(400, "Price is invalid", "Body");
+            throw new ApiException(400, "Price is invalid", "price");
         }
 
         if (bookRepository.findByTitleIgnoreCaseAndAuthorIgnoreCase(book.getTitle(), book.getAuthor()).isPresent()) {
@@ -66,7 +66,7 @@ public class BookService {
         }
 
         if (updatedBook == null) {
-            throw new ApiException(400, "Book is invalid", "Body");
+            throw new ApiException(400, "Book is invalid", "body");
         }
 
         if (updatedBook.getTitle() != null) {
@@ -77,15 +77,15 @@ public class BookService {
         }
 
         if (updatedBook.getTitle() == null || updatedBook.getTitle().isBlank()) {
-            throw new ApiException(400, "Title is required", "Body");
+            throw new ApiException(400, "Title is required", "title");
         }
 
         if (updatedBook.getAuthor() == null || updatedBook.getAuthor().isBlank()) {
-            throw new ApiException(400, "Author is required", "Body");
+            throw new ApiException(400, "Author is required", "author");
         }
 
         if (updatedBook.getPrice() == null || updatedBook.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-            throw new ApiException(400, "Price is invalid", "Body");
+            throw new ApiException(400, "Price is invalid", "price");
         }
 
         Optional<Book> existingBook = bookRepository.findById(id);

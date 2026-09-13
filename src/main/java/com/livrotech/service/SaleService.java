@@ -49,28 +49,28 @@ public class SaleService {
     @Transactional
     public Sale save(Sale sale) {
         if (sale == null) {
-            throw new ApiException(400, "Sale is invalid", "Body");
+            throw new ApiException(400, "Sale is invalid", "body");
         }
 
         if (sale.getSaleDate() == null) {
             sale.setSaleDate(LocalDate.now());
         } else if (sale.getSaleDate().isAfter(LocalDate.now())) {
-            throw new ApiException(400, "Sale date cannot be in the future", "SaleDate");
+            throw new ApiException(400, "Sale date cannot be in the future", "saleDate");
         }
 
         if (sale.getCustomer() == null || (sale.getCustomer().getId() == null
                 && (sale.getCustomer().getCpf() == null || sale.getCustomer().getCpf().isBlank()))) {
-            throw new ApiException(400, "Customer is required (id or cpf)", "Body");
+            throw new ApiException(400, "Customer is required (id or cpf)", "body");
         }
 
         Book requestedBook = sale.getBook();
         if (requestedBook == null || requestedBook.getId() == null) {
-            throw new ApiException(400, "Book is required", "Body");
+            throw new ApiException(400, "Book is required", "bookId");
         }
 
         Employee requestedEmployee = sale.getEmployee();
         if (requestedEmployee == null || requestedEmployee.getId() == null) {
-            throw new ApiException(400, "Employee is required", "Body");
+            throw new ApiException(400, "Employee is required", "employeeId");
         }
 
         long bookId = requestedBook.getId();
@@ -79,17 +79,17 @@ public class SaleService {
         Customer customer;
         if (sale.getCustomer().getId() != null) {
             customer = customerRepository.findById(sale.getCustomer().getId())
-                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
+                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "customerId"));
         } else {
             customer = customerRepository.findByCpf(sale.getCustomer().getCpf())
-                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "Body"));
+                    .orElseThrow(() -> new ApiException(400, "Customer does not exist", "customerCpf"));
         }
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ApiException(400, "Book does not exist", "Body"));
+                .orElseThrow(() -> new ApiException(400, "Book does not exist", "bookId"));
 
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new ApiException(400, "Employee does not exist", "Body"));
+                .orElseThrow(() -> new ApiException(400, "Employee does not exist", "employeeId"));
 
         if (Status.INACTIVE == customer.getStatus()) {
             throw new ApiException(400, "Customer is inactive", "customerId");

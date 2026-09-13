@@ -20,7 +20,7 @@ public class EmployeeService {
 
     public Employee save(Employee employee) {
         if (employee == null) {
-            throw new ApiException(400, "Employee is invalid", "Body");
+            throw new ApiException(400, "Employee is invalid", "body");
         }
 
         if (employee.getName() != null) {
@@ -34,19 +34,19 @@ public class EmployeeService {
         }
 
         if (employee.getName() == null || employee.getName().isBlank()) {
-            throw new ApiException(400, "Name is required", "Name");
+            throw new ApiException(400, "Name is required", "name");
         }
 
         if (employee.getCpf() == null || !employee.getCpf().matches("\\d{11}")) {
-            throw new ApiException(400, "CPF must have 11 digits", "CPF");
+            throw new ApiException(400, "CPF must have 11 digits", "cpf");
         }
 
         if (employee.getPosition() == null || employee.getPosition().isBlank()) {
-            throw new ApiException(400, "Position is required", "Position");
+            throw new ApiException(400, "Position is required", "position");
         }
 
         if (employee.getStatus() == null) {
-            throw new ApiException(400, "Status is required", "Status");
+            throw new ApiException(400, "Status is required", "status");
         }
 
         if (employeeRepository.findByCpf(employee.getCpf()).isPresent()) {
@@ -77,11 +77,11 @@ public class EmployeeService {
         }
 
         if (updatedEmployee == null) {
-            throw new ApiException(400, "Employee is invalid", "Body");
+            throw new ApiException(400, "Employee is invalid", "body");
         }
 
         if (updatedEmployee.getStatus() == null) {
-            throw new ApiException(400, "Status is required", "Status");
+            throw new ApiException(400, "Status is required", "status");
         }
 
         Optional<Employee> existingEmployee = employeeRepository.findById(id);

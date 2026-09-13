@@ -20,7 +20,7 @@ public class CustomerService {
 
     public Customer save(Customer customer) {
         if (customer == null) {
-            throw new ApiException(400, "Customer is invalid", "Body");
+            throw new ApiException(400, "Customer is invalid", "body");
         }
 
         if (customer.getName() != null) {
@@ -31,15 +31,15 @@ public class CustomerService {
         }
 
         if (customer.getName() == null || customer.getName().isBlank()) {
-            throw new ApiException(400, "Name is required", "Name");
+            throw new ApiException(400, "Name is required", "name");
         }
 
         if (customer.getCpf() == null || !customer.getCpf().matches("\\d{11}")) {
-            throw new ApiException(400, "CPF must have 11 digits", "CPF");
+            throw new ApiException(400, "CPF must have 11 digits", "cpf");
         }
 
         if (customer.getStatus() == null) {
-            throw new ApiException(400, "Status is required", "Status");
+            throw new ApiException(400, "Status is required", "status");
         }
 
         Optional<Customer> existingCustomer = customerRepository.findByCpf(customer.getCpf());
@@ -74,11 +74,11 @@ public class CustomerService {
         }
 
         if (updatedCustomer == null) {
-            throw new ApiException(400, "Customer is invalid", "Body");
+            throw new ApiException(400, "Customer is invalid", "body");
         }
 
         if (updatedCustomer.getStatus() == null) {
-            throw new ApiException(400, "Status is required", "Status");
+            throw new ApiException(400, "Status is required", "status");
         }
 
         Optional<Customer> existingCustomer = customerRepository.findById(id);

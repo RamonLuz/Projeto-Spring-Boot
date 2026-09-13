@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         ApiExceptionDTO response = new ApiExceptionDTO(
                 400,
                 "Parâmetro inválido",
-                "PARAMETER"
+                "parameter"
         );
 
         return ResponseEntity.badRequest().body(response);
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiExceptionDTO> handleValidation(MethodArgumentNotValidException ex) {
         var error = ex.getBindingResult().getFieldErrors().stream().findFirst();
-        String field = error.map(fieldError -> fieldError.getField()).orElse("BODY");
+        String field = error.map(fieldError -> fieldError.getField()).orElse("body");
         String message = error.map(fieldError -> fieldError.getDefaultMessage())
                 .orElse("Dados inválidos");
 
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiExceptionDTO> handleConstraintViolation(ConstraintViolationException ex) {
-        ApiExceptionDTO response = new ApiExceptionDTO(400, "Parâmetro inválido", "PARAMETER");
+        ApiExceptionDTO response = new ApiExceptionDTO(400, "Parâmetro inválido", "parameter");
 
         return ResponseEntity.badRequest().body(response);
     }
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
         ApiExceptionDTO response = new ApiExceptionDTO(
                 409,
                 "A operação viola uma regra de integridade dos dados",
-                "DATA"
+                "data"
         );
 
         return ResponseEntity.status(409).body(response);
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
         ApiExceptionDTO response = new ApiExceptionDTO(
                 400,
                 "Body da requisição está ausente ou inválido",
-                "BODY"
+                "body"
         );
 
         return ResponseEntity.badRequest().body(response);
