@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.livrotech.entity.ApiException;
+import com.livrotech.exception.ApiException;
 import com.livrotech.entity.Employee;
 import com.livrotech.entity.Status;
 import com.livrotech.repository.EmployeeRepository;

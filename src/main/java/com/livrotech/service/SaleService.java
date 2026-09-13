@@ -10,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.livrotech.entity.ApiException;
 import com.livrotech.entity.Book;
 import com.livrotech.entity.Customer;
 import com.livrotech.entity.Employee;
 import com.livrotech.entity.Sale;
 import com.livrotech.entity.Status;
+import com.livrotech.exception.ApiException;
 import com.livrotech.repository.BookRepository;
 import com.livrotech.repository.CustomerRepository;
 import com.livrotech.repository.EmployeeRepository;

@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.livrotech.entity.ApiException;
 import com.livrotech.entity.Employee;
+import com.livrotech.exception.ApiException;
 import com.livrotech.repository.EmployeeRepository;
 
 @Service

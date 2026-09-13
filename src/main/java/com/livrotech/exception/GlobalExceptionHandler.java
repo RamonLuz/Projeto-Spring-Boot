@@ -14,7 +14,6 @@ import jakarta.validation.ConstraintViolationException;
 
 import com.livrotech.dto.ApiExceptionDTO;
 import com.livrotech.dto.ApiValidationErrorDTO;
-import com.livrotech.entity.ApiException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
