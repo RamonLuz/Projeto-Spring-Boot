@@ -13,3 +13,5 @@ spring:
   flyway:
     enabled: true
 
+  flyway:
+    enabled: true
