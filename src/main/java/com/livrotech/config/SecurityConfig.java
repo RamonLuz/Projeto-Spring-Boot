@@ -2,6 +2,7 @@ package com.livrotech.config;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,12 +14,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,7 +28,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             ObjectProvider<JwtAuthenticationFilter> jwtAuthenticationFilterProvider,
-            UserDetailsService userDetailsService,
+            ObjectProvider<UserDetailsService> userDetailsServiceProvider,
             PasswordEncoder passwordEncoder,
             @Value("${app.security.enabled:false}") boolean securityEnabled) throws Exception {
 
@@ -38,6 +36,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         JwtAuthenticationFilter jwtAuthenticationFilter = jwtAuthenticationFilterProvider.getIfAvailable();
+        UserDetailsService userDetailsService = userDetailsServiceProvider.getIfAvailable();
 
         if (securityEnabled) {
             http.authorizeHttpRequests(auth -> auth
@@ -48,8 +47,10 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/books/**", "/customers/**", "/employees/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/books/**", "/customers/**", "/employees/**", "/sales/**").hasRole("ADMIN")
                     .anyRequest().authenticated());
-            http.authenticationProvider(authenticationProvider(userDetailsService, passwordEncoder))
-                    .httpBasic(AbstractHttpConfigurer::disable)
+            if (userDetailsService != null) {
+                http.authenticationProvider(authenticationProvider(userDetailsService, passwordEncoder));
+            }
+            http.httpBasic(AbstractHttpConfigurer::disable)
                     .formLogin(AbstractHttpConfigurer::disable);
             if (jwtAuthenticationFilter != null) {
                 http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -74,6 +75,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "app.security.enabled", havingValue = "true")
     AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
@@ -81,16 +83,4 @@ public class SecurityConfig {
         return provider;
     }
 
-    @Bean
-    InMemoryUserDetailsManager userDetailsManager(
-            @Value("${APP_SECURITY_USERNAME:admin}") String username,
-            @Value("${APP_SECURITY_PASSWORD:admin123}") String password,
-            @Value("${APP_SECURITY_ROLE:ADMIN}") String role,
-            PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername(username)
-                .password(passwordEncoder.encode(password))
-                .roles(role.trim())
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
 }
