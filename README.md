@@ -168,6 +168,42 @@ O console H2 permanece desativado por padrão para evitar acesso direto ao banco
 
 ---
 
+## 🔐 Autenticação e segurança
+
+O projeto passou por uma evolução gradual de segurança para ficar mais próximo de um ambiente realista:
+
+- login via JWT em `/auth/login`
+- autenticação baseada em usuários persistidos no banco
+- senha armazenada com BCrypt
+- roles por perfil (`ADMIN`, `USER`)
+- autorização por método e por configuração HTTP
+
+### Variáveis de ambiente principais
+
+```bash
+APP_SECURITY_ENABLED=true
+APP_SECURITY_USERNAME=admin
+APP_SECURITY_PASSWORD=admin123
+APP_SECURITY_ROLE=ADMIN
+APP_JWT_SECRET=sua-chave-secreta-muito-segura
+```
+
+### Exemplo de uso
+
+```bash
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+O retorno inclui um token JWT para ser enviado no header:
+
+```http
+Authorization: Bearer <token>
+```
+
+---
+
 ## 📌 Endpoints
 
 ### Livros
