@@ -1,10 +1,11 @@
 package com.livrotech.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,29 +13,34 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    @ConditionalOnProperty(name = "app.security.enabled", havingValue = "false")
-    SecurityFilterChain permitAllSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .build();
-    }
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            @Value("${app.security.enabled:false}") boolean securityEnabled) throws Exception {
 
-    @Bean
-    @ConditionalOnProperty(name = "app.security.enabled", havingValue = "true", matchIfMissing = true)
-    SecurityFilterChain authenticatedSecurityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(httpBasic -> {})
-                .build();
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers("/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+            if (securityEnabled) {
+                auth.anyRequest().authenticated();
+            } else {
+                auth.anyRequest().permitAll();
+            }
+        });
+
+        if (securityEnabled) {
+            http.httpBasic(Customizer.withDefaults());
+            http.formLogin(AbstractHttpConfigurer::disable);
+        } else {
+            http.httpBasic(AbstractHttpConfigurer::disable);
+            http.formLogin(AbstractHttpConfigurer::disable);
+        }
+
+        return http.build();
     }
 
     @Bean
