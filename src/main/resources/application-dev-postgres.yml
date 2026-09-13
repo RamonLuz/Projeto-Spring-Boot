@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/livrotech}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:livrotech}
+    password: ${DB_PASSWORD:livrotech}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  flyway:
+    enabled: true
+

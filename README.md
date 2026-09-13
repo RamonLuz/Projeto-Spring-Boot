@@ -151,6 +151,13 @@ spring:
   ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
   ```
 
+Para testar um banco persistente com PostgreSQL, inicie o Docker Compose e use o perfil opcional:
+
+```bash
+docker compose up -d
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-postgres
+```
+
 ### Console H2
 
 O console H2 permanece desativado por padrão para evitar acesso direto ao banco.

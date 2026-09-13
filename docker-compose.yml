@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: livrotech-postgres
+    environment:
+      POSTGRES_DB: livrotech
+      POSTGRES_USER: livrotech
+      POSTGRES_PASSWORD: livrotech
+    ports:
+      - "5432:5432"
+    volumes:
+      - livrotech-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  livrotech-postgres-data:
