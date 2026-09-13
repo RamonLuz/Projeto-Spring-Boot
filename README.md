@@ -218,10 +218,59 @@ APP_SECURITY_ROLE=ADMIN
 APP_JWT_SECRET=sua-chave-secreta-muito-segura
 APP_JWT_ISSUER=livrotech-api
 APP_JWT_EXPIRATION_MS=3600000
+APP_JWT_REFRESH_EXPIRATION_MS=604800000
 APP_CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
 ```
 
-### Exemplo de uso
+### Refresh token
+
+A autenticação emite dois tokens no login:
+
+- `accessToken`: usado nas requisições autenticadas com expiração curta
+- `refreshToken`: usado para renovar a sessão sem exigir novo login
+
+```bash
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+O retorno inclui os tokens:
+
+```json
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "tokenType": "Bearer"
+}
+```
+
+Para renovar o acesso:
+
+```bash
+curl -X POST http://localhost:8080/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refreshToken":"..."}'
+```
+
+### Gestão de usuários
+
+A API também oferece endpoints administrativos para listagem e criação de usuários:
+
+```bash
+curl -X GET http://localhost:8080/users \
+  -H "Authorization: Bearer [token]"
+```
+
+---
+
+## 🚀 CI/CD
+
+O projeto inclui um pipeline GitHub Actions em `.github/workflows/ci.yml` para validar build, teste e integridade do código em pushes e pull requests.
+
+---
+
+
 
 ```bash
 curl -X POST http://localhost:8080/auth/login \
