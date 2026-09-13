@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.livrotech.entity.ApiException;
 import com.livrotech.entity.Employee;
@@ -71,6 +72,7 @@ public class EmployeeService {
         return employeeRepository.findById(id);
     }
 
+    @Transactional
     public Optional<Employee> update(Long id, Employee updatedEmployee) {
         if (id == null) {
             return Optional.empty();
@@ -96,6 +98,7 @@ public class EmployeeService {
         return Optional.empty();
     }
 
+    @Transactional
     public boolean delete(Long id) {
         if (id == null) {
             return false;
