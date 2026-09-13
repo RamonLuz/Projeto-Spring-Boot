@@ -61,6 +61,13 @@ public class CustomerService {
         return customerRepository.findAll(pageable);
     }
 
+    public Page<Customer> listPage(Pageable pageable, String name) {
+        if (name == null || name.isBlank()) {
+            return listPage(pageable);
+        }
+        return customerRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+    }
+
     public Optional<Customer> findById(Long id) {
         if (id == null) {
             return Optional.empty();

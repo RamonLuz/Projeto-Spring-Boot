@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.BookRequestDTO;
@@ -39,8 +40,9 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<Page<BookResponseDTO>> getAll(
-            @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(bookService.listPage(pageable).map(BookMapper::toResponse));
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = false) String title) {
+        return ResponseEntity.ok(bookService.listPage(pageable, title).map(BookMapper::toResponse));
     }
 
     @PostMapping

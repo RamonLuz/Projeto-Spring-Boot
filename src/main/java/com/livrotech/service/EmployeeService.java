@@ -71,6 +71,13 @@ public class EmployeeService {
         return employeeRepository.findAll(pageable);
     }
 
+    public Page<Employee> listPage(Pageable pageable, String name) {
+        if (name == null || name.isBlank()) {
+            return listPage(pageable);
+        }
+        return employeeRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+    }
+
     public Optional<Employee> findById(Long id) {
         if (id == null) {
             return Optional.empty();

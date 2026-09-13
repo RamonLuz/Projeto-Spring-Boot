@@ -22,6 +22,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	@EntityGraph(attributePaths = "purchases")
 	Page<Customer> findAll(Pageable pageable);
 
+	@EntityGraph(attributePaths = "purchases")
+	Page<Customer> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
 	@Override
 	@EntityGraph(attributePaths = "purchases")
 	Optional<Customer> findById(Long id);

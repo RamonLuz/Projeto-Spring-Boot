@@ -29,6 +29,13 @@ public class BookService {
         return bookRepository.findAll(pageable);
     }
 
+    public Page<Book> listPage(Pageable pageable, String title) {
+        if (title == null || title.isBlank()) {
+            return listPage(pageable);
+        }
+        return bookRepository.findByTitleContainingIgnoreCase(title.trim(), pageable);
+    }
+
     public Book save(Book book) {
         if (book == null) {
             throw new ApiException(400, "Book is invalid", "body");

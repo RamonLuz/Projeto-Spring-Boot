@@ -45,6 +45,13 @@ public class SaleService {
         return saleRepository.findAll(pageable);
     }
 
+    public Page<Sale> listPage(Pageable pageable, LocalDate saleDate) {
+        if (saleDate == null) {
+            return listPage(pageable);
+        }
+        return saleRepository.findBySaleDate(saleDate, pageable);
+    }
+
     public Optional<Sale> findById(Long id) {
         if (id == null) {
             return Optional.empty();

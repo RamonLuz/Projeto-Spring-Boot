@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.EmployeeRequestDTO;
@@ -40,8 +41,9 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<Page<EmployeeResponseDTO>> getAll(
-            @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(employeeService.listPage(pageable).map(EmployeeMapper::toResponse));
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = false) String name) {
+        return ResponseEntity.ok(employeeService.listPage(pageable, name).map(EmployeeMapper::toResponse));
     }
 
     @GetMapping("/{id}")
