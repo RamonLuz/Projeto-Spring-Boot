@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.livrotech.dto.EmployeeRequestDTO;
 import com.livrotech.dto.EmployeeResponseDTO;
-import com.livrotech.dto.StatusUpdateRequestDTO;
+import com.livrotech.dto.EmployeeStatusUpdateRequestDTO;
 import com.livrotech.entity.Employee;
 import com.livrotech.service.EmployeeService;
 
@@ -66,7 +66,7 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponseDTO> update(@PathVariable @Positive Long id,
-            @Valid @RequestBody StatusUpdateRequestDTO dto) {
+            @Valid @RequestBody EmployeeStatusUpdateRequestDTO dto) {
         Employee employee = new Employee();
         employee.setStatus(dto.status());
 
