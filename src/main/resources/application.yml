@@ -8,6 +8,8 @@ spring:
 app:
   security:
     enabled: false
+  jwt:
+    secret: ${APP_JWT_SECRET:livrotech-dev-secret-key-12345678901234567890}
   seed-data:
     enabled: false
 
