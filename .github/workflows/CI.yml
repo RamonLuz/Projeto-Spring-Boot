@@ -3,6 +3,8 @@ name: Java CI
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -23,4 +25,4 @@ jobs:
           cache: maven
 
       - name: Build
-        run: mvn clean install
+        run: ./mvnw -B clean verify
