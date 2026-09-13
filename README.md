@@ -237,6 +237,20 @@ Authorization: Bearer <token>
 
 ---
 
+## 📈 Observabilidade
+
+A aplicação expõe endpoints Spring Boot Actuator para monitoramento básico:
+
+```bash
+curl http://localhost:8080/actuator/health
+curl http://localhost:8080/actuator/info
+curl http://localhost:8080/actuator/metrics
+```
+
+Os endpoints ativos incluem `health`, `info`, `metrics` e `prometheus`.
+
+---
+
 ## 📌 Endpoints
 
 ### Livros

@@ -1,6 +1,7 @@
 package com.livrotech.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -40,5 +42,18 @@ class AuthControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("jwt-token", response.getBody().token());
+    }
+
+    @Test
+    void shouldPropagateAuthenticationFailure() {
+        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        JwtService jwtService = mock(JwtService.class);
+        AuthController controller = new AuthController(authenticationManager, jwtService);
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
+
+        assertThrows(BadCredentialsException.class,
+                () -> controller.login(new AuthRequestDTO("admin", "wrong-password")));
     }
 }
