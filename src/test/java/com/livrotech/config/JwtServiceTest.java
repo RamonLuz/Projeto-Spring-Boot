@@ -15,6 +15,7 @@ class JwtServiceTest {
         setField(jwtService, "secret", "test-secret-key-12345678901234567890");
         setField(jwtService, "issuer", "livrotech-api");
         setField(jwtService, "expirationMs", 3_600_000L);
+        setField(jwtService, "refreshExpirationMs", 86_400_000L);
 
         UserDetails user = User.withUsername("admin")
                 .password("secret")
@@ -22,9 +23,11 @@ class JwtServiceTest {
                 .build();
 
         String token = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         assertEquals("admin", jwtService.extractUsername(token));
         assertTrue(jwtService.isTokenValid(token, user));
+        assertTrue(jwtService.isRefreshTokenValid(refreshToken, user));
     }
 
     private void setField(Object target, String fieldName, Object value) {

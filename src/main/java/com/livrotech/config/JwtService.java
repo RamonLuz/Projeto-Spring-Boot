@@ -30,21 +30,15 @@ public class JwtService {
     @Value("${app.jwt.expiration-ms:3600000}")
     private long expirationMs;
 
-    public String generateToken(UserDetails userDetails) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + expirationMs);
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+    @Value("${app.jwt.refresh-expiration-ms:604800000}")
+    private long refreshExpirationMs;
 
-        return Jwts.builder()
-                .issuer(issuer)
-                .subject(userDetails.getUsername())
-                .issuedAt(now)
-                .expiration(expiry)
-                .claim("roles", roles)
-                .signWith(getSigningKey())
-                .compact();
+    public String generateToken(UserDetails userDetails) {
+        return createToken(userDetails, expirationMs, "access");
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return createToken(userDetails, refreshExpirationMs, "refresh");
     }
 
     public String extractUsername(String token) {
@@ -58,10 +52,43 @@ public class JwtService {
 
         try {
             String username = extractUsername(token);
-            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token)
+                    && "access".equalsIgnoreCase(extractAllClaims(token).get("tokenType", String.class));
         } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }
+    }
+
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+
+        try {
+            String username = extractUsername(token);
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token)
+                    && "refresh".equalsIgnoreCase(extractAllClaims(token).get("tokenType", String.class));
+        } catch (JwtException | IllegalArgumentException exception) {
+            return false;
+        }
+    }
+
+    private String createToken(UserDetails userDetails, long tokenExpirationMs, String tokenType) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + tokenExpirationMs);
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return Jwts.builder()
+                .issuer(issuer)
+                .subject(userDetails.getUsername())
+                .issuedAt(now)
+                .expiration(expiry)
+                .claim("tokenType", tokenType)
+                .claim("roles", roles)
+                .signWith(getSigningKey())
+                .compact();
     }
 
     private boolean isTokenExpired(String token) {
