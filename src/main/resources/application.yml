@@ -10,3 +10,7 @@ app:
     enabled: true
   seed-data:
     enabled: false
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%X{requestId}] %-5level %logger{36} - %msg%n"

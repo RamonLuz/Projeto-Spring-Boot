@@ -3,6 +3,7 @@ package com.livrotech;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ class IntegrationTest {
     void shouldCheckApplicationAndDatabaseHealth() throws Exception {
         mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
+                .andExpect(header().exists("X-Request-ID"))
                 .andExpect(jsonPath("$.status").value("UP"))
                 .andExpect(jsonPath("$.database").value("UP"));
     }
