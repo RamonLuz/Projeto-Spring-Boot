@@ -19,12 +19,16 @@ import com.livrotech.exception.ApiException;
 import com.livrotech.entity.Customer;
 import com.livrotech.entity.Status;
 import com.livrotech.repository.CustomerRepository;
+import com.livrotech.repository.SaleRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
 
     @Mock
     private CustomerRepository customerRepository;
+
+    @Mock
+    private SaleRepository saleRepository;
 
     @InjectMocks
     private CustomerService customerService;

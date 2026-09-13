@@ -93,7 +93,7 @@ class SaleServiceTest {
 
         assertEquals(LocalDate.now(), savedSale.getSaleDate());
         assertEquals(customer, savedSale.getCustomer());
-        assertEquals(book, customer.getPurchases().get(0));
+        assertEquals(book, sale.getBook());
     }
 
     @Test

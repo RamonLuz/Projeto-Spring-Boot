@@ -1,6 +1,5 @@
 package com.livrotech.service;
 
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -119,21 +118,9 @@ public class SaleService {
         sale.setBook(book);
         sale.setEmployee(employee);
 
-        syncCustomerPurchases(customer, book);
-
         Sale savedSale = saleRepository.save(sale);
         log.info("Sale created with id {}", savedSale.getId());
         return savedSale;
     }
 
-    private void syncCustomerPurchases(Customer customer, Book book) {
-        if (customer.getPurchases() == null) {
-            customer.setPurchases(new ArrayList<>());
-        }
-
-        if (!customer.getPurchases().contains(book)) {
-            customer.getPurchases().add(book);
-            customerRepository.save(customer);
-        }
-    }
 }

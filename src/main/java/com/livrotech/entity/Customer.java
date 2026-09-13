@@ -7,9 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +26,7 @@ public class Customer extends Person {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany
-    @JoinTable(
-            name = "customer_purchases",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
+    @Transient
     private List<Book> purchases = new ArrayList<>();
 
     public Customer(String name, String cpf, Status status, List<Book> purchases) {

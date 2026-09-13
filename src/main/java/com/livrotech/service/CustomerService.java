@@ -13,15 +13,18 @@ import org.slf4j.LoggerFactory;
 import com.livrotech.entity.Customer;
 import com.livrotech.exception.ApiException;
 import com.livrotech.repository.CustomerRepository;
+import com.livrotech.repository.SaleRepository;
 
 @Service
 public class CustomerService {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
     private final CustomerRepository customerRepository;
+    private final SaleRepository saleRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, SaleRepository saleRepository) {
         this.customerRepository = customerRepository;
+        this.saleRepository = saleRepository;
     }
 
     public Customer save(Customer customer) {
@@ -59,32 +62,37 @@ public class CustomerService {
     }
 
     public List<Customer> listAll() {
-        return customerRepository.findAll();
+        return customerRepository.findAll().stream().map(this::loadPurchases).toList();
     }
 
     public Page<Customer> listPage(Pageable pageable) {
-        return customerRepository.findAll(pageable);
+        return customerRepository.findAll(pageable).map(this::loadPurchases);
     }
 
     public Page<Customer> listPage(Pageable pageable, String name) {
         if (name == null || name.isBlank()) {
             return listPage(pageable);
         }
-        return customerRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+        return customerRepository.findByNameContainingIgnoreCase(name.trim(), pageable).map(this::loadPurchases);
     }
 
     public Optional<Customer> findById(Long id) {
         if (id == null) {
             return Optional.empty();
         }
-        return customerRepository.findById(id);
+        return customerRepository.findById(id).map(this::loadPurchases);
     }
 
     public Optional<Customer> findByCpf(String cpf) {
         if (cpf == null || cpf.isBlank()) {
             return Optional.empty();
         }
-        return customerRepository.findByCpf(cpf);
+        return customerRepository.findByCpf(cpf).map(this::loadPurchases);
+    }
+
+    private Customer loadPurchases(Customer customer) {
+        customer.setPurchases(saleRepository.findBooksByCustomerId(customer.getId()));
+        return customer;
     }
 
     @Transactional
