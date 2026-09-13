@@ -3,6 +3,7 @@ package com.livrotech.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -90,6 +91,18 @@ public class GlobalExceptionHandler {
                 409,
                 message,
                 field
+        );
+
+        return ResponseEntity.status(409).body(response);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiExceptionDTO> handleOptimisticLocking(
+            ObjectOptimisticLockingFailureException ex) {
+        ApiExceptionDTO response = new ApiExceptionDTO(
+                409,
+                "O registro foi alterado por outro usuário. Tente novamente",
+                "data"
         );
 
         return ResponseEntity.status(409).body(response);

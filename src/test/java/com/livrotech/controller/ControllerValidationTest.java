@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -172,6 +173,17 @@ class ControllerValidationTest {
                 .andExpect(jsonPath("$.field").value("bookId"))
                 .andExpect(jsonPath("$.message")
                         .value("Não é possível remover um livro que possui vendas"));
+    }
+
+    @Test
+    void shouldReturnConflictForOptimisticLockingFailure() throws Exception {
+        when(bookService.delete(1L)).thenThrow(new ObjectOptimisticLockingFailureException(Book.class, 1L));
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/books/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.field").value("data"))
+                .andExpect(jsonPath("$.message")
+                        .value("O registro foi alterado por outro usuário. Tente novamente"));
     }
 
     @Test
