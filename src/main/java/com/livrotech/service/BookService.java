@@ -3,16 +3,19 @@ package com.livrotech.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.livrotech.entity.Book;
 import com.livrotech.exception.ApiException;
 import com.livrotech.repository.BookRepository;
+
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class BookService {
@@ -35,11 +38,36 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Book> listPage(Pageable pageable, String title, String author, String category, Boolean availableOnly) {
+        Specification<Book> specification = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (title != null && !title.isBlank()) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), "%" + title.trim().toLowerCase() + "%"));
+            }
+
+            if (author != null && !author.isBlank()) {
+                predicate = cb.and(predicate, cb.like(cb.lower(root.get("author")), "%" + author.trim().toLowerCase() + "%"));
+            }
+
+            if (category != null && !category.isBlank()) {
+                predicate = cb.and(predicate, cb.equal(cb.lower(root.get("category")), category.trim().toLowerCase()));
+            }
+
+            if (Boolean.TRUE.equals(availableOnly)) {
+                predicate = cb.and(predicate, cb.greaterThan(root.get("stock"), 0));
+                predicate = cb.and(predicate, cb.isTrue(root.get("active")));
+            }
+
+            return predicate;
+        };
+
+        return bookRepository.findAll(specification, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Book> listPage(Pageable pageable, String title) {
-        if (title == null || title.isBlank()) {
-            return listPage(pageable);
-        }
-        return bookRepository.findByTitleContainingIgnoreCase(title.trim(), pageable);
+        return listPage(pageable, title, null, null, false);
     }
 
     public Book save(Book book) {
@@ -53,6 +81,12 @@ public class BookService {
         if (book.getAuthor() != null) {
             book.setAuthor(book.getAuthor().trim());
         }
+        if (book.getIsbn() != null) {
+            book.setIsbn(book.getIsbn().trim());
+        }
+        if (book.getCategory() != null) {
+            book.setCategory(book.getCategory().trim());
+        }
 
         if (book.getTitle() == null || book.getTitle().isBlank()) {
             throw new ApiException(400, "Title is required", "title");
@@ -64,6 +98,23 @@ public class BookService {
 
         if (book.getPrice() == null || book.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new ApiException(400, "Price is invalid", "price");
+        }
+
+        if (book.getStock() == null || book.getStock() < 0) {
+            throw new ApiException(400, "Stock cannot be negative", "stock");
+        }
+
+        if (book.getCategory() == null || book.getCategory().isBlank()) {
+            book.setCategory("Geral");
+        }
+
+        if (book.getIsbn() != null && !book.getIsbn().isBlank()) {
+            bookRepository.findByIsbn(book.getIsbn())
+                    .ifPresent(existing -> {
+                        if (!existing.getId().equals(book.getId())) {
+                            throw new ApiException(409, "ISBN already registered", "isbn");
+                        }
+                    });
         }
 
         if (bookRepository.findByTitleIgnoreCaseAndAuthorIgnoreCase(book.getTitle(), book.getAuthor()).isPresent()) {
@@ -99,6 +150,12 @@ public class BookService {
         if (updatedBook.getAuthor() != null) {
             updatedBook.setAuthor(updatedBook.getAuthor().trim());
         }
+        if (updatedBook.getIsbn() != null) {
+            updatedBook.setIsbn(updatedBook.getIsbn().trim());
+        }
+        if (updatedBook.getCategory() != null) {
+            updatedBook.setCategory(updatedBook.getCategory().trim());
+        }
 
         if (updatedBook.getTitle() == null || updatedBook.getTitle().isBlank()) {
             throw new ApiException(400, "Title is required", "title");
@@ -112,6 +169,14 @@ public class BookService {
             throw new ApiException(400, "Price is invalid", "price");
         }
 
+        if (updatedBook.getStock() == null || updatedBook.getStock() < 0) {
+            throw new ApiException(400, "Stock cannot be negative", "stock");
+        }
+
+        if (updatedBook.getCategory() == null || updatedBook.getCategory().isBlank()) {
+            updatedBook.setCategory("Geral");
+        }
+
         Optional<Book> existingBook = bookRepository.findById(id);
 
         if (existingBook.isPresent()) {
@@ -123,9 +188,22 @@ public class BookService {
                 throw new ApiException(409, "Book already exists for this title and author", "title");
             }
 
+            if (updatedBook.getIsbn() != null && !updatedBook.getIsbn().isBlank()) {
+                Optional<Book> isbnConflict = bookRepository.findByIsbn(updatedBook.getIsbn());
+                if (isbnConflict.isPresent() && !isbnConflict.get().getId().equals(id)) {
+                    throw new ApiException(409, "ISBN already registered", "isbn");
+                }
+            }
+
             book.setTitle(updatedBook.getTitle());
             book.setAuthor(updatedBook.getAuthor());
+            book.setIsbn(updatedBook.getIsbn());
+            book.setCategory(updatedBook.getCategory());
+            book.setDescription(updatedBook.getDescription());
             book.setPrice(updatedBook.getPrice());
+            book.setStock(updatedBook.getStock());
+            book.setFeatured(updatedBook.isFeatured());
+            book.setActive(updatedBook.isActive());
 
             bookRepository.save(book);
             log.info("Book updated with id {}", id);

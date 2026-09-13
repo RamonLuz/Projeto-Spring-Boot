@@ -24,8 +24,23 @@ public class BookRequestDTO {
     @Size(max = 100, message = "Author must have at most 100 characters")
     private String author;
 
+    @Size(max = 20, message = "ISBN must have at most 20 characters")
+    private String isbn;
+
+    @Size(max = 80, message = "Category must have at most 80 characters")
+    private String category;
+
+    @Size(max = 500, message = "Description must have at most 500 characters")
+    private String description;
+
     @DecimalMin(value = "0.01", message = "Price must be greater than zero")
     @Digits(integer = 10, fraction = 2, message = "Price must have at most 2 decimal places")
     @NotNull(message = "Price is required")
     private BigDecimal price;
+
+    @jakarta.validation.constraints.Min(value = 0, message = "Stock cannot be negative")
+    private Integer stock = 0;
+
+    private boolean featured;
+    private boolean active = true;
 }

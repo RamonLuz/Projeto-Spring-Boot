@@ -8,6 +8,12 @@ public record BookResponseDTO(
         Long id,
         String title,
         String author,
-        BigDecimal price
+        String isbn,
+        String category,
+        String description,
+        BigDecimal price,
+        Integer stock,
+        boolean featured,
+        boolean active
 ) {
 }

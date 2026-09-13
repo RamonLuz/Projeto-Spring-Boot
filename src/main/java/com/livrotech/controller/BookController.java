@@ -1,5 +1,6 @@
 package com.livrotech.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -51,6 +52,30 @@ public class BookController {
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String title) {
         return ResponseEntity.ok(bookService.listPage(pageable, title).map(BookMapper::toResponse));
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Busca avancada de livros", description = "Permite filtrar por titulo, autora, categoria e disponibilidade.")
+    public ResponseEntity<Page<BookResponseDTO>> search(
+            @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false, defaultValue = "false") boolean availableOnly) {
+        return ResponseEntity.ok(bookService.listPage(pageable, title, author, category, availableOnly).map(BookMapper::toResponse));
+    }
+
+    @GetMapping("/featured")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Lista destaques", description = "Lista livros em destaque ativos e com estoque disponivel")
+    public ResponseEntity<List<BookResponseDTO>> getFeatured() {
+        return ResponseEntity.ok(bookService.listAll().stream()
+                .filter(Book::isFeatured)
+                .filter(Book::isActive)
+                .filter(book -> book.getStock() > 0)
+                .map(BookMapper::toResponse)
+                .toList());
     }
 
     @PostMapping

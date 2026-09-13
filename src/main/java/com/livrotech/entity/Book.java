@@ -20,7 +20,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "books", uniqueConstraints = {
-        @jakarta.persistence.UniqueConstraint(name = "uk_book_title_author", columnNames = {"title", "author"})
+        @jakarta.persistence.UniqueConstraint(name = "uk_book_title_author", columnNames = {"title", "author"}),
+        @jakarta.persistence.UniqueConstraint(name = "uk_book_isbn", columnNames = {"isbn"})
 })
 @Getter
 @Setter
@@ -41,11 +42,34 @@ public class Book extends AuditableEntity {
     @Column(nullable = false, length = 100)
     private String author;
 
+    @Size(max = 20)
+    @Column(length = 20, unique = true)
+    private String isbn;
+
+    @Size(max = 80)
+    @Column(length = 80)
+    private String category = "Geral";
+
+    @Size(max = 500)
+    @Column(length = 500)
+    private String description;
+
     @NotNull
     @DecimalMin("0.01")
     @Digits(integer = 10, fraction = 2)
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
+
+    @NotNull
+    @jakarta.validation.constraints.Min(0)
+    @Column(nullable = false)
+    private Integer stock = 0;
+
+    @Column(nullable = false)
+    private boolean featured = false;
+
+    @Column(nullable = false)
+    private boolean active = true;
 
     @jakarta.persistence.Version
     private Long version;
@@ -55,6 +79,8 @@ public class Book extends AuditableEntity {
         this.title = title;
         this.author = author;
         this.price = price;
+        this.stock = 0;
+        this.category = "Geral";
     }
 
     @Override
