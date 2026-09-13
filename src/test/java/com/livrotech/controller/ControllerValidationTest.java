@@ -27,6 +27,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.livrotech.entity.Book;
@@ -45,6 +47,8 @@ import com.livrotech.service.SaleService;
         EmployeeController.class,
         SaleController.class
 })
+@ActiveProfiles("test")
+@TestPropertySource(properties = "app.security.enabled=false")
 class ControllerValidationTest {
 
     @Autowired
