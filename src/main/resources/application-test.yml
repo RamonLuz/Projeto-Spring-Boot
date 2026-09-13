@@ -23,4 +23,6 @@ app:
 
 logging:
   level:
+    root: WARN
     org.hibernate.SQL: WARN
+    org.springframework.security: WARN

@@ -25,4 +25,6 @@ server:
 
 logging:
   level:
+    root: INFO
     org.hibernate.SQL: DEBUG
+    org.springframework.security: INFO
