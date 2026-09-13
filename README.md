@@ -223,6 +223,34 @@ As listagens aceitam `page`, `size` e `sort`. Também possuem filtros:
 
 As respostas de listagem são paginadas e incluem os metadados da página.
 
+## 🔐 Autenticação
+
+A API está configurada para funcionar sem autenticação por padrão, para facilitar testes e uso local.
+
+Se quiser habilitar autenticação HTTP Basic, defina a propriedade:
+
+```yaml
+app:
+  security:
+    enabled: true
+```
+
+Quando ativa, as credenciais padrão são:
+
+```text
+usuário: admin
+senha: admin123
+```
+
+Você também pode sobrescrever usando variáveis de ambiente:
+
+```bash
+export APP_SECURITY_USERNAME=meu_usuario
+export APP_SECURITY_PASSWORD=minha_senha
+```
+
+---
+
 ## Swagger
 
 Com a aplicação em execução, a documentação pode ser acessada em:
