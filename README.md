@@ -189,6 +189,16 @@ A autorização foi evoluída para combinar camadas:
 
 Isso mantém o ambiente local/teste seguro e previsível, sem quebrar o modo padrão do projeto.
 
+### Segurança em produção
+
+Para deixar a API mais próxima de um ambiente de produção, também foram reforçados os pontos abaixo:
+
+- CORS configurado por origem e métodos permitidos
+- cabeçalhos de segurança com HSTS e bloqueio de frames
+- respostas JSON padronizadas para 401 e 403
+- token JWT com emissor, role e expiração configuráveis
+- suporte a HTTPS por configuração `app.security.require-https`
+
 ### Variáveis de ambiente principais
 
 ```bash
@@ -197,6 +207,9 @@ APP_SECURITY_USERNAME=admin
 APP_SECURITY_PASSWORD=admin123
 APP_SECURITY_ROLE=ADMIN
 APP_JWT_SECRET=sua-chave-secreta-muito-segura
+APP_JWT_ISSUER=livrotech-api
+APP_JWT_EXPIRATION_MS=3600000
+APP_CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
 ```
 
 ### Exemplo de uso
