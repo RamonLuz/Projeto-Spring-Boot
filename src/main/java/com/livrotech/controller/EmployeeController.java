@@ -18,6 +18,7 @@ import com.livrotech.dto.EmployeeRequestDTO;
 import com.livrotech.dto.EmployeeResponseDTO;
 import com.livrotech.dto.EmployeeStatusUpdateRequestDTO;
 import com.livrotech.entity.Employee;
+import com.livrotech.mapper.EmployeeMapper;
 import com.livrotech.service.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<EmployeeResponseDTO>> getAll() {
-        return ResponseEntity.ok(employeeService.listAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(employeeService.listAll().stream().map(EmployeeMapper::toResponse).toList());
     }
 
     @GetMapping("/{id}")
@@ -45,7 +46,7 @@ public class EmployeeController {
         Optional<Employee> employee = employeeService.findById(id);
 
         if (employee.isPresent()) {
-            return ResponseEntity.ok(toResponse(employee.get()));
+            return ResponseEntity.ok(EmployeeMapper.toResponse(employee.get()));
         }
 
         return ResponseEntity.notFound().build();
@@ -61,7 +62,7 @@ public class EmployeeController {
         employee.setStatus(dto.getStatus());
 
         Employee savedEmployee = employeeService.save(employee);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedEmployee));
+        return ResponseEntity.status(HttpStatus.CREATED).body(EmployeeMapper.toResponse(savedEmployee));
     }
 
     @PutMapping("/{id}")
@@ -73,15 +74,10 @@ public class EmployeeController {
         Optional<Employee> updatedEmployee = employeeService.update(id, employee);
 
         if (updatedEmployee.isPresent()) {
-            return ResponseEntity.ok(toResponse(updatedEmployee.get()));
+            return ResponseEntity.ok(EmployeeMapper.toResponse(updatedEmployee.get()));
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    private EmployeeResponseDTO toResponse(Employee employee) {
-        return new EmployeeResponseDTO(employee.getId(), employee.getName(), employee.getCpf(),
-                employee.getRegistrationNumber(), employee.getPosition(), employee.getStatus());
     }
 
     @DeleteMapping("/{id}")

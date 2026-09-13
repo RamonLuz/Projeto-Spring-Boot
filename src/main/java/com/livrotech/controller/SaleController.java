@@ -18,6 +18,7 @@ import com.livrotech.entity.Book;
 import com.livrotech.entity.Customer;
 import com.livrotech.entity.Employee;
 import com.livrotech.entity.Sale;
+import com.livrotech.mapper.SaleMapper;
 import com.livrotech.service.SaleService;
 
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class SaleController {
 
     @GetMapping
     public ResponseEntity<List<SaleResponseDTO>> getAll() {
-        return ResponseEntity.ok(saleService.listAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(saleService.listAll().stream().map(SaleMapper::toResponse).toList());
     }
 
     @GetMapping("/{id}")
@@ -45,7 +46,7 @@ public class SaleController {
         Optional<Sale> sale = saleService.findById(id);
 
         if (sale.isPresent()) {
-            return ResponseEntity.ok(toResponse(sale.get()));
+            return ResponseEntity.ok(SaleMapper.toResponse(sale.get()));
         }
 
         return ResponseEntity.notFound().build();
@@ -75,11 +76,6 @@ public class SaleController {
         }
 
         Sale savedSale = saleService.save(sale);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedSale));
-    }
-
-    private SaleResponseDTO toResponse(Sale sale) {
-        return new SaleResponseDTO(sale.getId(), sale.getCustomer().getId(), sale.getCustomer().getCpf(),
-                sale.getEmployee().getId(), sale.getBook().getId(), sale.getSaleDate());
+        return ResponseEntity.status(HttpStatus.CREATED).body(SaleMapper.toResponse(savedSale));
     }
 }

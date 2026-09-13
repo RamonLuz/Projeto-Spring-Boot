@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.livrotech.dto.BookRequestDTO;
 import com.livrotech.dto.BookResponseDTO;
 import com.livrotech.entity.Book;
+import com.livrotech.mapper.BookMapper;
 import com.livrotech.service.BookService;
 
 import jakarta.validation.Valid;
@@ -36,7 +37,7 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getAll() {
-        return ResponseEntity.ok(bookService.listAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(bookService.listAll().stream().map(BookMapper::toResponse).toList());
     }
 
     @PostMapping
@@ -47,7 +48,7 @@ public class BookController {
         book.setPrice(dto.getPrice());
 
         Book savedBook = bookService.save(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedBook));
+        return ResponseEntity.status(HttpStatus.CREATED).body(BookMapper.toResponse(savedBook));
     }
 
     @GetMapping("/{id}")
@@ -55,7 +56,7 @@ public class BookController {
         Optional<Book> book = bookService.findById(id);
 
         if (book.isPresent()) {
-            return ResponseEntity.ok(toResponse(book.get()));
+            return ResponseEntity.ok(BookMapper.toResponse(book.get()));
         }
 
         return ResponseEntity.notFound().build();
@@ -71,15 +72,10 @@ public class BookController {
         Optional<Book> updatedBook = bookService.update(id, book);
 
         if (updatedBook.isPresent()) {
-            return ResponseEntity.ok(toResponse(updatedBook.get()));
+            return ResponseEntity.ok(BookMapper.toResponse(updatedBook.get()));
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    private BookResponseDTO toResponse(Book book) {
-        // book.getPrice() is now BigDecimal in the entity
-        return new BookResponseDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice());
     }
 
     @DeleteMapping("/{id}")
