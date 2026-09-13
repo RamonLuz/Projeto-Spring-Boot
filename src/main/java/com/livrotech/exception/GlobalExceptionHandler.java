@@ -150,6 +150,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiExceptionDTO> handleIllegalArgument(IllegalArgumentException ex) {
+        ApiExceptionDTO response = new ApiExceptionDTO(
+                400,
+                ex.getMessage(),
+                "data"
+        );
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiExceptionDTO> handleApiException(ApiException ex) {
         ApiExceptionDTO response = new ApiExceptionDTO(
