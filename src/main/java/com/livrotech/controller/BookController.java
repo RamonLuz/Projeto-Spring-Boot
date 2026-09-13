@@ -23,6 +23,8 @@ import com.livrotech.entity.Book;
 import com.livrotech.mapper.BookMapper;
 import com.livrotech.service.BookService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 @RestController
 @Validated
 @RequestMapping("/books")
+@Tag(name = "Livros", description = "Operacoes de livros")
 public class BookController {
 
     private final BookService bookService;
@@ -39,6 +42,7 @@ public class BookController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista livros", description = "Lista livros com paginacao e filtro opcional por titulo.")
     public ResponseEntity<Page<BookResponseDTO>> getAll(
             @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String title) {
@@ -46,6 +50,7 @@ public class BookController {
     }
 
     @PostMapping
+    @Operation(summary = "Cadastra livro")
     public ResponseEntity<BookResponseDTO> create(@Valid @RequestBody BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
@@ -57,6 +62,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca livro por ID")
     public ResponseEntity<BookResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Book> book = bookService.findById(id);
 
@@ -68,6 +74,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza livro")
     public ResponseEntity<BookResponseDTO> update(@PathVariable @Positive Long id, @Valid @RequestBody BookRequestDTO dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
@@ -84,6 +91,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Remove livro")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = bookService.delete(id);
 

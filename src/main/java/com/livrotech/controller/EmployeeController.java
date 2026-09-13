@@ -24,6 +24,8 @@ import com.livrotech.entity.Employee;
 import com.livrotech.mapper.EmployeeMapper;
 import com.livrotech.service.EmployeeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,7 @@ import org.springframework.validation.annotation.Validated;
 @RestController
 @Validated
 @RequestMapping("/employees")
+@Tag(name = "Funcionarios", description = "Operacoes de funcionarios")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -40,6 +43,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista funcionarios", description = "Lista funcionarios com paginacao e filtro opcional por nome.")
     public ResponseEntity<Page<EmployeeResponseDTO>> getAll(
             @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String name) {
@@ -47,6 +51,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca funcionario por ID")
     public ResponseEntity<EmployeeResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Employee> employee = employeeService.findById(id);
 
@@ -58,6 +63,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @Operation(summary = "Cadastra funcionario")
     public ResponseEntity<EmployeeResponseDTO> create(@Valid @RequestBody EmployeeRequestDTO dto) {
         Employee employee = new Employee();
         employee.setName(dto.getName());
@@ -71,6 +77,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza status do funcionario")
     public ResponseEntity<EmployeeResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody EmployeeStatusUpdateRequestDTO dto) {
         Employee employee = new Employee();
@@ -86,6 +93,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Remove funcionario")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = employeeService.delete(id);
 

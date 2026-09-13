@@ -25,6 +25,8 @@ import com.livrotech.entity.Customer;
 import com.livrotech.mapper.CustomerMapper;
 import com.livrotech.service.CustomerService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 @RestController
 @Validated
 @RequestMapping("/customers")
+@Tag(name = "Clientes", description = "Operacoes de clientes")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -41,6 +44,7 @@ public class CustomerController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista clientes", description = "Lista clientes com paginacao e filtro opcional por nome.")
     public ResponseEntity<Page<CustomerResponseDTO>> getAll(
             @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String name) {
@@ -48,6 +52,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca cliente por ID")
     public ResponseEntity<CustomerResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
@@ -59,6 +64,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @Operation(summary = "Cadastra cliente")
     public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO dto) {
         Customer customer = new Customer();
         customer.setName(dto.getName());
@@ -70,6 +76,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza status do cliente")
     public ResponseEntity<CustomerResponseDTO> update(@PathVariable @Positive Long id,
             @Valid @RequestBody CustomerStatusUpdateRequestDTO dto) {
         Customer customer = new Customer();
@@ -85,6 +92,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Remove cliente")
     public ResponseEntity<Void> delete(@PathVariable @Positive Long id) {
         boolean removed = customerService.delete(id);
 

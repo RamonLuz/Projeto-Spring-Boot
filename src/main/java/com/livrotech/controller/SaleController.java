@@ -25,6 +25,8 @@ import com.livrotech.entity.Sale;
 import com.livrotech.mapper.SaleMapper;
 import com.livrotech.service.SaleService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 @RestController
 @Validated
 @RequestMapping("/sales")
+@Tag(name = "Vendas", description = "Operacoes de vendas")
 public class SaleController {
 
     private final SaleService saleService;
@@ -41,6 +44,7 @@ public class SaleController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista vendas", description = "Lista vendas com paginacao e filtro opcional por data.")
     public ResponseEntity<Page<SaleResponseDTO>> getAll(
             @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false)
@@ -49,6 +53,7 @@ public class SaleController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca venda por ID")
     public ResponseEntity<SaleResponseDTO> getById(@PathVariable @Positive Long id) {
         Optional<Sale> sale = saleService.findById(id);
 
@@ -60,6 +65,7 @@ public class SaleController {
     }
 
     @PostMapping
+    @Operation(summary = "Registra venda")
     public ResponseEntity<SaleResponseDTO> create(@Valid @RequestBody SaleRequestDTO dto) {
         Customer customer = new Customer();
         if (dto.getCustomerId() != null) {
