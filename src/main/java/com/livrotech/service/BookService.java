@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Book;
 import com.livrotech.exception.ApiException;
@@ -15,6 +17,7 @@ import com.livrotech.repository.BookRepository;
 @Service
 public class BookService {
 
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
     private final BookRepository bookRepository;
 
     public BookService(BookRepository bookRepository) {
@@ -64,7 +67,9 @@ public class BookService {
             throw new ApiException(409, "Book already exists for this title and author", "title");
         }
 
-        return bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
+        log.info("Book created with id {}", savedBook.getId());
+        return savedBook;
     }
 
     public Optional<Book> findById(Long id) {
@@ -119,6 +124,7 @@ public class BookService {
             book.setPrice(updatedBook.getPrice());
 
             bookRepository.save(book);
+            log.info("Book updated with id {}", id);
             return Optional.of(book);
         }
 
@@ -133,6 +139,7 @@ public class BookService {
 
         if (bookRepository.existsById(id)) {
             bookRepository.deleteById(id);
+            log.info("Book deleted with id {}", id);
             return true;
         }
 

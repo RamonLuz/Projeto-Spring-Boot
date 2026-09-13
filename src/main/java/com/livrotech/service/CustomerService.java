@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Customer;
 import com.livrotech.exception.ApiException;
@@ -15,6 +17,7 @@ import com.livrotech.repository.CustomerRepository;
 @Service
 public class CustomerService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
     private final CustomerRepository customerRepository;
 
     public CustomerService(CustomerRepository customerRepository) {
@@ -50,7 +53,9 @@ public class CustomerService {
             throw new ApiException(409, "CPF already registered", "cpf");
         }
 
-        return customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.save(customer);
+        log.info("Customer created with id {}", savedCustomer.getId());
+        return savedCustomer;
     }
 
     public List<Customer> listAll() {
@@ -102,6 +107,7 @@ public class CustomerService {
             Customer customer = existingCustomer.get();
             customer.setStatus(updatedCustomer.getStatus());
             customerRepository.save(customer);
+            log.info("Customer status updated with id {}", id);
             return Optional.of(customer);
         }
 
@@ -116,6 +122,7 @@ public class CustomerService {
 
         if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
+            log.info("Customer deleted with id {}", id);
             return true;
         }
 

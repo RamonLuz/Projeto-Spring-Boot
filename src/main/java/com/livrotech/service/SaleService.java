@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Book;
 import com.livrotech.entity.Customer;
@@ -24,6 +26,7 @@ import com.livrotech.repository.SaleRepository;
 @Service
 public class SaleService {
 
+    private static final Logger log = LoggerFactory.getLogger(SaleService.class);
     private final CustomerRepository customerRepository;
     private final EmployeeRepository employeeRepository;
     private final BookRepository bookRepository;
@@ -118,7 +121,9 @@ public class SaleService {
 
         syncCustomerPurchases(customer, book);
 
-        return saleRepository.save(sale);
+        Sale savedSale = saleRepository.save(sale);
+        log.info("Sale created with id {}", savedSale.getId());
+        return savedSale;
     }
 
     private void syncCustomerPurchases(Customer customer, Book book) {

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Employee;
 import com.livrotech.exception.ApiException;
@@ -15,6 +17,7 @@ import com.livrotech.repository.EmployeeRepository;
 @Service
 public class EmployeeService {
 
+    private static final Logger log = LoggerFactory.getLogger(EmployeeService.class);
     private final EmployeeRepository employeeRepository;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
@@ -60,7 +63,9 @@ public class EmployeeService {
             throw new ApiException(409, "Registration number already registered", "registrationNumber");
         }
 
-        return employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.save(employee);
+        log.info("Employee created with id {}", savedEmployee.getId());
+        return savedEmployee;
     }
 
     public List<Employee> listAll() {
@@ -105,6 +110,7 @@ public class EmployeeService {
             Employee employee = existingEmployee.get();
             employee.setStatus(updatedEmployee.getStatus());
             employeeRepository.save(employee);
+            log.info("Employee status updated with id {}", id);
             return Optional.of(employee);
         }
 
@@ -119,6 +125,7 @@ public class EmployeeService {
 
         if (employeeRepository.existsById(id)) {
             employeeRepository.deleteById(id);
+            log.info("Employee deleted with id {}", id);
             return true;
         }
 
