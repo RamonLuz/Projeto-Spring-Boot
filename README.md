@@ -14,6 +14,9 @@ O projeto foi criado com o objetivo de praticar conceitos de desenvolvimento bac
 * Spring Data JPA
 * Bean Validation
 * H2 Database
+* Flyway
+* PostgreSQL opcional
+* OpenAPI/Swagger
 * Maven
 
 ---
@@ -149,6 +152,7 @@ spring:
   ```bash
   ./mvnw spring-boot:run -Dspring-boot.run.profiles=test
   ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
+  ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-postgres
   ```
 
 Para testar um banco persistente com PostgreSQL, inicie o Docker Compose e use o perfil opcional:
@@ -197,6 +201,8 @@ O console H2 permanece desativado por padrão para evitar acesso direto ao banco
 | GET    | /employees      |
 | GET    | /employees/{id} |
 | POST   | /employees      |
+| PUT    | /employees/{id} |
+| DELETE | /employees/{id} |
 
 ---
 
@@ -207,6 +213,23 @@ O console H2 permanece desativado por padrão para evitar acesso direto ao banco
 | GET    | /sales      |
 | GET    | /sales/{id} |
 | POST   | /sales      |
+
+As listagens aceitam `page`, `size` e `sort`. Também possuem filtros:
+
+* `/books?title=java`
+* `/customers?name=ana`
+* `/employees?name=joao`
+* `/sales?date=2026-09-13`
+
+As respostas de listagem são paginadas e incluem os metadados da página.
+
+## Swagger
+
+Com a aplicação em execução, a documentação pode ser acessada em:
+
+```
+http://localhost:8080/swagger-ui.html
+```
 
 ---
 
