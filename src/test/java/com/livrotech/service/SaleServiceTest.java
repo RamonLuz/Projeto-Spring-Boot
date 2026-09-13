@@ -187,6 +187,40 @@ class SaleServiceTest {
     }
 
     @Test
+    void shouldRejectSaleForInactiveCustomerOrEmployee() {
+        Customer inactiveCustomer = new Customer("Ana", "12345678901", Status.INACTIVE, new ArrayList<>());
+        inactiveCustomer.setId(1L);
+        Book book = new Book(2L, "Book", "Author", BigDecimal.TEN);
+        Employee employee = new Employee("Joao", "10987654321", 10, "Seller", Status.ACTIVE);
+        employee.setId(3L);
+
+        Sale sale = new Sale();
+        sale.setCustomer(inactiveCustomer);
+        sale.setBook(book);
+        sale.setEmployee(employee);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(inactiveCustomer));
+        when(bookRepository.findById(2L)).thenReturn(Optional.of(book));
+        when(employeeRepository.findById(3L)).thenReturn(Optional.of(employee));
+
+        ApiException customerException = assertThrows(ApiException.class, () -> saleService.save(sale));
+        assertEquals("Customer is inactive", customerException.getMessage());
+
+        Customer activeCustomer = new Customer("Ana", "12345678901", Status.ACTIVE, new ArrayList<>());
+        activeCustomer.setId(1L);
+        Employee inactiveEmployee = new Employee("Joao", "10987654321", 10, "Seller", Status.INACTIVE);
+        inactiveEmployee.setId(3L);
+        sale.setCustomer(activeCustomer);
+        sale.setEmployee(inactiveEmployee);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+        when(employeeRepository.findById(3L)).thenReturn(Optional.of(inactiveEmployee));
+
+        ApiException employeeException = assertThrows(ApiException.class, () -> saleService.save(sale));
+        assertEquals("Employee is inactive", employeeException.getMessage());
+    }
+
+    @Test
     void shouldNotDuplicateBookInCustomerPurchases() {
         Book book = new Book(2L, "Book", "Author", BigDecimal.TEN);
         Customer customer = new Customer("Ana", "12345678901", Status.ACTIVE, new ArrayList<>(List.of(book)));

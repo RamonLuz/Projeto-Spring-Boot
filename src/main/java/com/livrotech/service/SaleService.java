@@ -13,6 +13,7 @@ import com.livrotech.entity.Book;
 import com.livrotech.entity.Customer;
 import com.livrotech.entity.Employee;
 import com.livrotech.entity.Sale;
+import com.livrotech.entity.Status;
 import com.livrotech.repository.BookRepository;
 import com.livrotech.repository.CustomerRepository;
 import com.livrotech.repository.EmployeeRepository;
@@ -89,6 +90,14 @@ public class SaleService {
 
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ApiException(400, "Employee does not exist", "Body"));
+
+        if (Status.INACTIVE == customer.getStatus()) {
+            throw new ApiException(400, "Customer is inactive", "customerId");
+        }
+
+        if (Status.INACTIVE == employee.getStatus()) {
+            throw new ApiException(400, "Employee is inactive", "employeeId");
+        }
 
         sale.setCustomer(customer);
         sale.setBook(book);
