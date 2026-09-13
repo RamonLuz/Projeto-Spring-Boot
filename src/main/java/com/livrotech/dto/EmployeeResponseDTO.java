@@ -1,18 +1,15 @@
 package com.livrotech.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import com.livrotech.entity.Status;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record EmployeeResponseDTO(
-        @NotNull Long id,
-        @NotBlank String name,
-        @NotBlank String cpf,
-        @NotNull @Positive Integer registrationNumber,
-        @NotBlank String position,
-        @NotNull Status status
+        Long id,
+        String name,
+        String cpf,
+        Integer registrationNumber,
+        String position,
+        Status status
 ) {
 }
