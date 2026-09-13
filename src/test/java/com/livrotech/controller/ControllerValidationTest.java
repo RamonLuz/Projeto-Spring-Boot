@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -118,6 +119,23 @@ class ControllerValidationTest {
         when(employeeService.update(eq(1L), any(Employee.class))).thenReturn(Optional.of(employee));
 
         mockMvc.perform(put("/employees/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "status": "INACTIVE"
+                        }
+                        """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("INACTIVE"));
+    }
+
+    @Test
+    void shouldPatchCustomerStatus() throws Exception {
+        Customer customer = new Customer("Ana", "12345678901", Status.INACTIVE, new ArrayList<>());
+        customer.setId(1L);
+        when(customerService.update(eq(1L), any(Customer.class))).thenReturn(Optional.of(customer));
+
+        mockMvc.perform(patch("/customers/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
