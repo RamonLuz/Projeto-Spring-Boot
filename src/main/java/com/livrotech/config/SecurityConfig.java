@@ -16,7 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,6 +31,7 @@ public class SecurityConfig {
             HttpSecurity http,
             ObjectProvider<JwtAuthenticationFilter> jwtAuthenticationFilterProvider,
             UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder,
             @Value("${app.security.enabled:false}") boolean securityEnabled) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
@@ -46,7 +48,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/books/**", "/customers/**", "/employees/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/books/**", "/customers/**", "/employees/**", "/sales/**").hasRole("ADMIN")
                     .anyRequest().authenticated());
-            http.authenticationProvider(authenticationProvider(userDetailsService))
+            http.authenticationProvider(authenticationProvider(userDetailsService, passwordEncoder))
                     .httpBasic(AbstractHttpConfigurer::disable)
                     .formLogin(AbstractHttpConfigurer::disable);
             if (jwtAuthenticationFilter != null) {
@@ -67,10 +69,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
@@ -78,9 +85,10 @@ public class SecurityConfig {
     InMemoryUserDetailsManager userDetailsManager(
             @Value("${APP_SECURITY_USERNAME:admin}") String username,
             @Value("${APP_SECURITY_PASSWORD:admin123}") String password,
-            @Value("${APP_SECURITY_ROLE:ADMIN}") String role) {
+            @Value("${APP_SECURITY_ROLE:ADMIN}") String role,
+            PasswordEncoder passwordEncoder) {
         UserDetails user = User.withUsername(username)
-                .password("{noop}" + password)
+                .password(passwordEncoder.encode(password))
                 .roles(role.trim())
                 .build();
         return new InMemoryUserDetailsManager(user);
