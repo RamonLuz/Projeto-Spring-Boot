@@ -5,18 +5,23 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -163,6 +168,68 @@ class ControllerValidationTest {
                 .andExpect(jsonPath("$.customerId").value(1))
                 .andExpect(jsonPath("$.employeeId").value(2))
                 .andExpect(jsonPath("$.bookId").value(3));
+    }
+
+    @Test
+    void shouldPaginateAndFilterBooks() throws Exception {
+        Book book = new Book(1L, "Java Basics", "Author", BigDecimal.TEN);
+        when(bookService.listPage(any(Pageable.class), eq("java")))
+                .thenReturn(new PageImpl<>(List.of(book), PageRequest.of(1, 1), 3));
+
+        mockMvc.perform(get("/books")
+                .param("title", "java")
+                .param("page", "1")
+                .param("size", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.number").value(1))
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.content[0].title").value("Java Basics"));
+    }
+
+    @Test
+    void shouldFilterCustomersByName() throws Exception {
+        Customer customer = new Customer("Ana", "12345678901", Status.ACTIVE, new ArrayList<>());
+        customer.setId(1L);
+        when(customerService.listPage(any(Pageable.class), eq("ana")))
+                .thenReturn(new PageImpl<>(List.of(customer)));
+
+        mockMvc.perform(get("/customers").param("name", "ana"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].name").value("Ana"));
+    }
+
+    @Test
+    void shouldFilterEmployeesByName() throws Exception {
+        Employee employee = new Employee("Joao", "10987654321", 10, "Seller", Status.ACTIVE);
+        employee.setId(1L);
+        when(employeeService.listPage(any(Pageable.class), eq("joao")))
+                .thenReturn(new PageImpl<>(List.of(employee)));
+
+        mockMvc.perform(get("/employees").param("name", "joao"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].name").value("Joao"));
+    }
+
+    @Test
+    void shouldFilterSalesByDate() throws Exception {
+        Customer customer = new Customer("Ana", "12345678901", Status.ACTIVE, new ArrayList<>());
+        customer.setId(1L);
+        Employee employee = new Employee("Joao", "10987654321", 10, "Seller", Status.ACTIVE);
+        employee.setId(2L);
+        Book book = new Book(3L, "Book", "Author", BigDecimal.TEN);
+        Sale sale = new Sale();
+        sale.setId(4L);
+        sale.setCustomer(customer);
+        sale.setEmployee(employee);
+        sale.setBook(book);
+        sale.setSaleDate(LocalDate.of(2026, 9, 13));
+        when(saleService.listPage(any(Pageable.class), eq(LocalDate.of(2026, 9, 13))))
+                .thenReturn(new PageImpl<>(List.of(sale)));
+
+        mockMvc.perform(get("/sales").param("date", "2026-09-13"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(4));
     }
 
     private record SaleRequestBody(Long customerId, Long employeeId, Long bookId) {
