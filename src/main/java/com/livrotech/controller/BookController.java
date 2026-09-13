@@ -24,7 +24,9 @@ import com.livrotech.mapper.BookMapper;
 import com.livrotech.service.BookService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -44,7 +46,7 @@ public class BookController {
     @GetMapping
     @Operation(summary = "Lista livros", description = "Lista livros com paginacao e filtro opcional por titulo.")
     public ResponseEntity<Page<BookResponseDTO>> getAll(
-            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String title) {
         return ResponseEntity.ok(bookService.listPage(pageable, title).map(BookMapper::toResponse));
     }

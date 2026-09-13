@@ -26,7 +26,9 @@ import com.livrotech.mapper.EmployeeMapper;
 import com.livrotech.service.EmployeeService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +48,7 @@ public class EmployeeController {
     @GetMapping
     @Operation(summary = "Lista funcionarios", description = "Lista funcionarios com paginacao e filtro opcional por nome.")
     public ResponseEntity<Page<EmployeeResponseDTO>> getAll(
-            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false) String name) {
         return ResponseEntity.ok(employeeService.listPage(pageable, name).map(EmployeeMapper::toResponse));
     }

@@ -26,7 +26,9 @@ import com.livrotech.mapper.SaleMapper;
 import com.livrotech.service.SaleService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +48,7 @@ public class SaleController {
     @GetMapping
     @Operation(summary = "Lista vendas", description = "Lista vendas com paginacao e filtro opcional por data.")
     public ResponseEntity<Page<SaleResponseDTO>> getAll(
-            @PageableDefault(size = 20, sort = "id") Pageable pageable,
+            @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
         return ResponseEntity.ok(saleService.listPage(pageable, date).map(SaleMapper::toResponse));
