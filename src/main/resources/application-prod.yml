@@ -1,13 +1,9 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:livrotech}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
-
-  h2:
-    console:
-      enabled: false
+    url: ${DB_URL}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -16,6 +12,9 @@ spring:
     properties:
       hibernate:
         format_sql: false
+
+  flyway:
+    enabled: true
 
 server:
   port: ${PORT:8080}
