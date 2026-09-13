@@ -78,6 +78,21 @@ class ControllerValidationTest {
     }
 
     @Test
+    void shouldRejectCpfWithInvalidCheckDigits() throws Exception {
+        mockMvc.perform(post("/customers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "name": "Ana",
+                          "cpf": "12345678901",
+                          "status": "ACTIVE"
+                        }
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("cpf"));
+    }
+
+    @Test
     void shouldUpdateCustomerStatus() throws Exception {
         Customer customer = new Customer("Ana", "12345678901", Status.INACTIVE, new ArrayList<>());
         customer.setId(1L);

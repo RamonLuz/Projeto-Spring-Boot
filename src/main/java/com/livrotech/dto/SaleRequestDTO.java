@@ -10,6 +10,7 @@ import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.livrotech.validation.ValidCpf;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class SaleRequestDTO {
 
     /** Either customerId or customerCpf must be provided. Service will prefer id when present. */
     @Pattern(regexp = "\\d{11}", message = "CPF must have 11 digits")
+    @ValidCpf
     private String customerCpf;
 
     @Positive(message = "Customer id must be a positive number")

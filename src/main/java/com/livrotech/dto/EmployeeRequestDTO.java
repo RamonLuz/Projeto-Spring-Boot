@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import com.livrotech.entity.Status;
+import com.livrotech.validation.ValidCpf;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class EmployeeRequestDTO {
 
     @NotBlank(message = "CPF is required")
     @Pattern(regexp = "\\d{11}", message = "CPF must have 11 digits")
+    @ValidCpf
     private String cpf;
 
     @NotNull
