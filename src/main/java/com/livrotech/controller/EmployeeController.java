@@ -22,6 +22,7 @@ import com.livrotech.dto.EmployeeRequestDTO;
 import com.livrotech.dto.EmployeeResponseDTO;
 import com.livrotech.dto.EmployeeStatusUpdateRequestDTO;
 import com.livrotech.entity.Employee;
+import com.livrotech.entity.Status;
 import com.livrotech.mapper.EmployeeMapper;
 import com.livrotech.service.EmployeeService;
 
@@ -46,11 +47,15 @@ public class EmployeeController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista funcionarios", description = "Lista funcionarios com paginacao e filtro opcional por nome.")
+    @Operation(summary = "Lista funcionarios", description = "Lista funcionarios com paginacao e filtro opcional por nome e status.")
     public ResponseEntity<Page<EmployeeResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
-            @RequestParam(required = false) String name) {
-        return ResponseEntity.ok(employeeService.listPage(pageable, name).map(EmployeeMapper::toResponse));
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Status status) {
+        Page<Employee> employees = (status == null)
+                ? employeeService.listPage(pageable, name)
+                : employeeService.listPage(pageable, name, status);
+        return ResponseEntity.ok(employees.map(EmployeeMapper::toResponse));
     }
 
     @GetMapping("/{id}")

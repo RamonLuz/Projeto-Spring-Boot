@@ -23,6 +23,7 @@ import com.livrotech.dto.CustomerRequestDTO;
 import com.livrotech.dto.CustomerResponseDTO;
 import com.livrotech.dto.CustomerStatusUpdateRequestDTO;
 import com.livrotech.entity.Customer;
+import com.livrotech.entity.Status;
 import com.livrotech.mapper.CustomerMapper;
 import com.livrotech.service.CustomerService;
 
@@ -47,11 +48,15 @@ public class CustomerController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista clientes", description = "Lista clientes com paginacao e filtro opcional por nome.")
+    @Operation(summary = "Lista clientes", description = "Lista clientes com paginacao e filtro opcional por nome e status.")
     public ResponseEntity<Page<CustomerResponseDTO>> getAll(
             @ParameterObject @Parameter(description = "Use page, size e sort=campo,asc|desc") @PageableDefault(size = 20, sort = "id") Pageable pageable,
-            @RequestParam(required = false) String name) {
-        return ResponseEntity.ok(customerService.listPage(pageable, name).map(CustomerMapper::toResponse));
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Status status) {
+        Page<Customer> customers = (status == null)
+                ? customerService.listPage(pageable, name)
+                : customerService.listPage(pageable, name, status);
+        return ResponseEntity.ok(customers.map(CustomerMapper::toResponse));
     }
 
     @GetMapping("/{id}")

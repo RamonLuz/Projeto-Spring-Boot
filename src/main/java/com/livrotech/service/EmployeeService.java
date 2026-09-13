@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Employee;
+import com.livrotech.entity.Status;
 import com.livrotech.exception.ApiException;
 import com.livrotech.repository.EmployeeRepository;
 
@@ -80,10 +81,24 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public Page<Employee> listPage(Pageable pageable, String name) {
+        return listPage(pageable, name, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Employee> listPage(Pageable pageable, String name, Status status) {
         if (name == null || name.isBlank()) {
-            return listPage(pageable);
+            if (status == null) {
+                return listPage(pageable);
+            }
+            return employeeRepository.findByStatus(status, pageable);
         }
-        return employeeRepository.findByNameContainingIgnoreCase(name.trim(), pageable);
+
+        String normalizedName = name.trim();
+        if (status == null) {
+            return employeeRepository.findByNameContainingIgnoreCase(normalizedName, pageable);
+        }
+
+        return employeeRepository.findByNameContainingIgnoreCaseAndStatus(normalizedName, status, pageable);
     }
 
     @Transactional(readOnly = true)

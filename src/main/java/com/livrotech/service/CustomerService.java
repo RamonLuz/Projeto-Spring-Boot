@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.livrotech.entity.Customer;
+import com.livrotech.entity.Status;
 import com.livrotech.exception.ApiException;
 import com.livrotech.repository.CustomerRepository;
 import com.livrotech.repository.SaleRepository;
@@ -73,10 +74,25 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public Page<Customer> listPage(Pageable pageable, String name) {
+        return listPage(pageable, name, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Customer> listPage(Pageable pageable, String name, Status status) {
         if (name == null || name.isBlank()) {
-            return listPage(pageable);
+            if (status == null) {
+                return listPage(pageable);
+            }
+            return customerRepository.findByStatus(status, pageable).map(this::loadPurchases);
         }
-        return customerRepository.findByNameContainingIgnoreCase(name.trim(), pageable).map(this::loadPurchases);
+
+        String normalizedName = name.trim();
+        if (status == null) {
+            return customerRepository.findByNameContainingIgnoreCase(normalizedName, pageable).map(this::loadPurchases);
+        }
+
+        return customerRepository.findByNameContainingIgnoreCaseAndStatus(normalizedName, status, pageable)
+                .map(this::loadPurchases);
     }
 
     @Transactional(readOnly = true)
